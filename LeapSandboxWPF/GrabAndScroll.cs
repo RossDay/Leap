@@ -48,27 +48,42 @@ namespace LeapSandboxWPF
         public static extern bool GetGUIThreadInfo(uint tId, out GUITHREADINFO threadInfo);
 
 
-        private void scrollActiveWindow()
-        {
-            GUITHREADINFO gInfo = new GUITHREADINFO();
-            gInfo.cbSize = (uint)Marshal.SizeOf(gInfo);
-            GetGUIThreadInfo((uint)0, out gInfo);
-            IntPtr focusedWin = gInfo.hwndFocus;
+	    private IntPtr GetActiveWindow()
+	    {
+		    var gInfo = new GUITHREADINFO();
+		    gInfo.cbSize = (uint) Marshal.SizeOf(gInfo);
+		    GetGUIThreadInfo(0, out gInfo);
+		    return gInfo.hwndFocus;
+	    }
+
+	    private void scrollActiveWindow()
+	    {
+		    var focusedWin = GetActiveWindow();
             SendMessage(focusedWin, WM_VSCROLL, (IntPtr)1, IntPtr.Zero);
             //textBox1.Text = textBox1.Text + "\r\n" + focusedWin.ToString();
         }
 
 
         private bool _IsGrabbed;
-
+	    private IntPtr _ActiveWindow;
         private int _Progress;
+	    private int _ActiveHand;
 
 
         public void OnFrame(Frame frame)
         {
+	        Hand hand;
+	        if (_ActiveHand == 0 && !frame.Hands.IsEmpty)
+	        {
+		        hand = frame.Hands.Leftmost;
+		        _ActiveHand = hand.Id;
+	        }
+
             foreach (var g in frame.Gestures().Where(g => g.Type == Gesture.GestureType.TYPECIRCLE))
             {
                 CircleGesture circle = new CircleGesture(g);
+
+				//if 
 
                 var isClockwise = (circle.Pointable.Direction.AngleTo(circle.Normal) <= Math.PI / 4);
 

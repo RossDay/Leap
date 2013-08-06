@@ -96,6 +96,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="GrabAndScroll.cs" />
+    <Compile Include="LeapExtensions.cs" />
     <Compile Include="SandboxListener.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
