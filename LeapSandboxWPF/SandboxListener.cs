@@ -16,6 +16,7 @@ namespace LeapSandboxWPF
 {
 	class SandboxListener : Listener
 	{
+        private readonly GrabAndScroll grabAndScroll = new GrabAndScroll();
 		private readonly Object thisLock = new Object();
 		private readonly System.Windows.Controls.Label Log;
 		private int FrameCount;
@@ -79,6 +80,8 @@ namespace LeapSandboxWPF
 		{
 			// Get the most recent frame and report some basic information
 			Frame frame = controller.Frame();
+
+            grabAndScroll.OnFrame(frame);
 
 			++FrameCount;
 			if (FrameCount < 100 && frame.Gestures().Count == 0)
@@ -208,7 +211,7 @@ namespace LeapSandboxWPF
 						if (swipe.State == Gesture.GestureState.STATESTART)
 						{
 							VirtualKeyCode[] nums = {VirtualKeyCode.VK_1, VirtualKeyCode.VK_2, VirtualKeyCode.VK_3, VirtualKeyCode.VK_4};
-							if (!frame.Hands.Empty && frame.Hands[0].Fingers.Count > 0 && frame.Hands[0].Fingers.Count < 5)
+							if (!frame.Hands.Empty && frame.Hands[0].Fingers.Count >= 0 && frame.Hands[0].Fingers.Count < 5)
 								InputSimulator.SimulateModifiedKeyStroke(VirtualKeyCode.LWIN, nums[frame.Hands[0].Fingers.Count - 1]);
 						}
 						break;
