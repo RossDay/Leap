@@ -11,11 +11,13 @@ using System.Linq;
 
 using Leap;
 using WindowsInput;
+using WindowsInput.Native;
 
 namespace LeapSandboxWPF
 {
 	class SandboxListener : Listener
 	{
+		private readonly InputSimulator _InputSim = new InputSimulator();
         private readonly GrabAndScroll grabAndScroll;
 		private readonly Object thisLock = new Object();
 		private readonly System.Windows.Controls.Label Log;
@@ -110,40 +112,40 @@ namespace LeapSandboxWPF
 					//SafeWriteLine("Hand has " + fingers.Count + " fingers, average finger tip position: " + avgPos);
 				}
 
-                /*
+				/*
 				try
 				{
 					if (fingers.Count == 1)
 					{
 						SafeWriteLine("InputSimulator.SimulateKeyPress(VirtualKeyCode.VK_1);");
-						InputSimulator.SimulateKeyPress(VirtualKeyCode.VK_1);
+						_InputSim.Keyboard.KeyPress(VirtualKeyCode.VK_1);
 					}
 					else if (fingers.Count == 2)
 					{
 						SafeWriteLine("InputSimulator.SimulateKeyPress(VirtualKeyCode.VK_2);");
-						InputSimulator.SimulateKeyPress(VirtualKeyCode.VK_2);
+						_InputSim.Keyboard.KeyPress(VirtualKeyCode.VK_2);
 					}
 					else if (fingers.Count == 3)
 					{
 						SafeWriteLine("InputSimulator.SimulateKeyPress(VirtualKeyCode.VK_3);");
-						InputSimulator.SimulateKeyPress(VirtualKeyCode.VK_3);
+						_InputSim.Keyboard.KeyPress(VirtualKeyCode.VK_3);
 					}
 					else if (fingers.Count == 4)
 					{
 						SafeWriteLine("InputSimulator.SimulateKeyPress(VirtualKeyCode.VK_4);");
-						InputSimulator.SimulateKeyPress(VirtualKeyCode.VK_4);
+						_InputSim.Keyboard.KeyPress(VirtualKeyCode.VK_4);
 					}
 					else if (fingers.Count == 5)
 					{
 						SafeWriteLine("InputSimulator.SimulateKeyPress(VirtualKeyCode.RETURN);");
-						InputSimulator.SimulateKeyPress(VirtualKeyCode.RETURN);
+						_InputSim.Keyboard.KeyPress(VirtualKeyCode.RETURN);
 					}
 				}
 				catch (Exception e)
 				{
 					SafeWriteLine("EXCEPT: " + e.GetType().Name + "\n" + e.Message);
 				}
-                */
+				*/
 
 				// Get the hand's sphere radius and palm position
 				//SafeWriteLine("Hand sphere radius: " + hand.SphereRadius.ToString("n2") + " mm, palm position: " + hand.PalmPosition);
@@ -197,7 +199,7 @@ namespace LeapSandboxWPF
 						{
 							VirtualKeyCode[] nums = {VirtualKeyCode.VK_1, VirtualKeyCode.VK_2, VirtualKeyCode.VK_3, VirtualKeyCode.VK_4};
 							if (!frame.Hands.Empty && frame.Hands[0].Fingers.Count >= 0 && frame.Hands[0].Fingers.Count < 5)
-								InputSimulator.SimulateModifiedKeyStroke(VirtualKeyCode.LWIN, nums[frame.Hands[0].Fingers.Count - 1]);
+								_InputSim.Keyboard.ModifiedKeyStroke(VirtualKeyCode.LWIN, nums[frame.Hands[0].Fingers.Count - 1]);
 						}
 						break;
 					case Gesture.GestureType.TYPEKEYTAP:

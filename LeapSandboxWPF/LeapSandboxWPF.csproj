@@ -70,9 +70,6 @@
     <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="InputSimulator">
-      <HintPath>..\InputSimulator\InputSimulator.dll</HintPath>
-    </Reference>
     <Reference Include="LeapCSharp.NET4.0">
       <HintPath>..\LeapSDK\lib\LeapCSharp.NET4.0.dll</HintPath>
     </Reference>
@@ -89,6 +86,9 @@
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
+    <Reference Include="WindowsInput">
+      <HintPath>..\InputSimulator\0.2.0.0\WindowsInput.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">

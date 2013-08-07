@@ -4,6 +4,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using Leap;
+using WindowsInput;
 
 namespace LeapSandboxWPF
 {
@@ -69,14 +70,19 @@ namespace LeapSandboxWPF
 
 	    private void ScrollActiveWindow(bool IsUp)
 	    {
-		    var focusedWin = GetActiveWindow();
             //var p = GetCursorPosition();
             //focusedWin = WindowFromPoint(p.X, p.Y);
             //SendMessage(focusedWin, WM_MOUSEWHEEL, (IntPtr)MakeDWord((IsUp ? 2 : -2)*WHEEL_DELTA, 0), (IntPtr)MakeDWord(p.X, p.Y));
             //_LogAction(String.Format("Scrolling Window {0} {1} with Mouse at {2}, {3}", focusedWin.ToInt64(), (IsUp ? "Up" : "Down"), p.X, p.Y));
-            SendMessage(focusedWin, WM_VSCROLL, (IntPtr)(IsUp ? SB_LINEUP : SB_LINEDOWN), IntPtr.Zero);
-        }
 
+			var focusedWin = GetActiveWindow();
+			SendMessage(focusedWin, WM_VSCROLL, (IntPtr)(IsUp ? SB_LINEUP : SB_LINEDOWN), IntPtr.Zero);
+
+			//_LogAction(String.Format("Mouse Wheel Scrolling {0}", (IsUp ? "Up" : "Down")));
+			//_InputSim.Mouse.VerticalScroll(IsUp ? 1 : -1);
+	    }
+
+	    private readonly InputSimulator _InputSim = new InputSimulator();
         private readonly Action<string> _LogAction;
         private bool _IsGrabbed;
         private float _StartingY;
