@@ -16,7 +16,7 @@ namespace LeapSandboxWPF
 {
 	class SandboxListener : Listener
 	{
-        private readonly GrabAndScroll grabAndScroll = new GrabAndScroll();
+        private readonly GrabAndScroll grabAndScroll;
 		private readonly Object thisLock = new Object();
 		private readonly System.Windows.Controls.Label Log;
 		private int FrameCount;
@@ -25,6 +25,7 @@ namespace LeapSandboxWPF
 		{
 			Log = log;
 			Log.Content += "Let's go!\n";
+            grabAndScroll = new GrabAndScroll(SafeWriteLine);
 		}
 
 		private void SafeWriteLine(String line)
@@ -88,12 +89,7 @@ namespace LeapSandboxWPF
 				return;
 			FrameCount = 0;
 
-			SafeWriteLine("Frame id: " + frame.Id
-			              + ", timestamp: " + frame.Timestamp
-			              + ", hands: " + frame.Hands.Count
-			              + ", fingers: " + frame.Fingers.Count
-			              + ", tools: " + frame.Tools.Count
-			              + ", gestures: " + frame.Gestures().Count);
+			//SafeWriteLine("Frame id: " + frame.Id + ", timestamp: " + frame.Timestamp + ", hands: " + frame.Hands.Count + ", fingers: " + frame.Fingers.Count + ", tools: " + frame.Tools.Count + ", gestures: " + frame.Gestures().Count);
 
 			if (!frame.Hands.Empty)
 			{
@@ -111,10 +107,10 @@ namespace LeapSandboxWPF
 						avgPos += finger.TipPosition;
 					}
 					avgPos /= fingers.Count;
-					SafeWriteLine("Hand has " + fingers.Count
-					              + " fingers, average finger tip position: " + avgPos);
+					//SafeWriteLine("Hand has " + fingers.Count + " fingers, average finger tip position: " + avgPos);
 				}
 
+                /*
 				try
 				{
 					if (fingers.Count == 1)
@@ -147,19 +143,17 @@ namespace LeapSandboxWPF
 				{
 					SafeWriteLine("EXCEPT: " + e.GetType().Name + "\n" + e.Message);
 				}
+                */
 
 				// Get the hand's sphere radius and palm position
-				SafeWriteLine("Hand sphere radius: " + hand.SphereRadius.ToString("n2")
-				              + " mm, palm position: " + hand.PalmPosition);
+				//SafeWriteLine("Hand sphere radius: " + hand.SphereRadius.ToString("n2") + " mm, palm position: " + hand.PalmPosition);
 
 				// Get the hand's normal vector and direction
 				Vector normal = hand.PalmNormal;
 				Vector direction = hand.Direction;
 
 				// Calculate the hand's pitch, roll, and yaw angles
-				SafeWriteLine("Hand pitch: " + direction.Pitch * 180.0f / (float)Math.PI + " degrees, "
-				              + "roll: " + normal.Roll * 180.0f / (float)Math.PI + " degrees, "
-				              + "yaw: " + direction.Yaw * 180.0f / (float)Math.PI + " degrees");
+				//SafeWriteLine("Hand pitch: " + direction.Pitch * 180.0f / (float)Math.PI + " degrees, " + "roll: " + normal.Roll * 180.0f / (float)Math.PI + " degrees, " + "yaw: " + direction.Yaw * 180.0f / (float)Math.PI + " degrees");
 			}
 
 			// Get gestures
@@ -194,20 +188,11 @@ namespace LeapSandboxWPF
 							sweptAngle = (circle.Progress - previousUpdate.Progress) * 360;
 						}
 
-						SafeWriteLine("Circle id: " + circle.Id
-						              + ", " + circle.State
-						              + ", progress: " + circle.Progress
-						              + ", radius: " + circle.Radius
-						              + ", angle: " + sweptAngle
-						              + ", " + clockwiseness);
+						//SafeWriteLine("Circle id: " + circle.Id + ", " + circle.State + ", progress: " + circle.Progress + ", radius: " + circle.Radius + ", angle: " + sweptAngle + ", " + clockwiseness); 
 						break;
 					case Gesture.GestureType.TYPESWIPE:
 						SwipeGesture swipe = new SwipeGesture(gesture);
-						SafeWriteLine("Swipe id: " + swipe.Id
-						              + ", " + swipe.State
-						              + ", position: " + swipe.Position
-						              + ", direction: " + swipe.Direction
-						              + ", speed: " + swipe.Speed);
+						//SafeWriteLine("Swipe id: " + swipe.Id + ", " + swipe.State + ", position: " + swipe.Position + ", direction: " + swipe.Direction + ", speed: " + swipe.Speed);
 						if (swipe.State == Gesture.GestureState.STATESTART)
 						{
 							VirtualKeyCode[] nums = {VirtualKeyCode.VK_1, VirtualKeyCode.VK_2, VirtualKeyCode.VK_3, VirtualKeyCode.VK_4};
@@ -217,17 +202,11 @@ namespace LeapSandboxWPF
 						break;
 					case Gesture.GestureType.TYPEKEYTAP:
 						KeyTapGesture keytap = new KeyTapGesture(gesture);
-						SafeWriteLine("Tap id: " + keytap.Id
-						              + ", " + keytap.State
-						              + ", position: " + keytap.Position
-						              + ", direction: " + keytap.Direction);
+						//SafeWriteLine("Tap id: " + keytap.Id + ", " + keytap.State + ", position: " + keytap.Position + ", direction: " + keytap.Direction);
 						break;
 					case Gesture.GestureType.TYPESCREENTAP:
 						ScreenTapGesture screentap = new ScreenTapGesture(gesture);
-						SafeWriteLine("Tap id: " + screentap.Id
-						              + ", " + screentap.State
-						              + ", position: " + screentap.Position
-						              + ", direction: " + screentap.Direction);
+						//SafeWriteLine("Tap id: " + screentap.Id + ", " + screentap.State + ", position: " + screentap.Position + ", direction: " + screentap.Direction);
 						break;
 					default:
 						SafeWriteLine("Unknown gesture type.");
@@ -237,7 +216,7 @@ namespace LeapSandboxWPF
 
 			if (!frame.Hands.Empty || !frame.Gestures().Empty)
 			{
-				SafeWriteLine("");
+				//SafeWriteLine("");
 			}
 		}
 	}
