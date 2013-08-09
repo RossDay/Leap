@@ -112,41 +112,6 @@ namespace LeapSandboxWPF
 					//SafeWriteLine("Hand has " + fingers.Count + " fingers, average finger tip position: " + avgPos);
 				}
 
-				/*
-				try
-				{
-					if (fingers.Count == 1)
-					{
-						SafeWriteLine("InputSimulator.SimulateKeyPress(VirtualKeyCode.VK_1);");
-						_InputSim.Keyboard.KeyPress(VirtualKeyCode.VK_1);
-					}
-					else if (fingers.Count == 2)
-					{
-						SafeWriteLine("InputSimulator.SimulateKeyPress(VirtualKeyCode.VK_2);");
-						_InputSim.Keyboard.KeyPress(VirtualKeyCode.VK_2);
-					}
-					else if (fingers.Count == 3)
-					{
-						SafeWriteLine("InputSimulator.SimulateKeyPress(VirtualKeyCode.VK_3);");
-						_InputSim.Keyboard.KeyPress(VirtualKeyCode.VK_3);
-					}
-					else if (fingers.Count == 4)
-					{
-						SafeWriteLine("InputSimulator.SimulateKeyPress(VirtualKeyCode.VK_4);");
-						_InputSim.Keyboard.KeyPress(VirtualKeyCode.VK_4);
-					}
-					else if (fingers.Count == 5)
-					{
-						SafeWriteLine("InputSimulator.SimulateKeyPress(VirtualKeyCode.RETURN);");
-						_InputSim.Keyboard.KeyPress(VirtualKeyCode.RETURN);
-					}
-				}
-				catch (Exception e)
-				{
-					SafeWriteLine("EXCEPT: " + e.GetType().Name + "\n" + e.Message);
-				}
-				*/
-
 				// Get the hand's sphere radius and palm position
 				//SafeWriteLine("Hand sphere radius: " + hand.SphereRadius.ToString("n2") + " mm, palm position: " + hand.PalmPosition);
 
@@ -170,17 +135,7 @@ namespace LeapSandboxWPF
 						CircleGesture circle = new CircleGesture(gesture);
 
 						// Calculate clock direction using the angle between circle normal and pointable
-						String clockwiseness;
-						if (circle.Pointable.Direction.AngleTo(circle.Normal) <= Math.PI / 4)
-						{
-							//Clockwise if angle is less than 90 degrees
-							clockwiseness = "clockwise";
-						}
-						else
-						{
-							clockwiseness = "counterclockwise";
-						}
-
+						//String clockwiseness = ((circle.Pointable.Direction.AngleTo(circle.Normal) <= Math.PI / 4) ? "clockwise" : "counterclockwise" );
 						float sweptAngle = 0;
 
 						// Calculate angle swept since last frame
@@ -195,12 +150,6 @@ namespace LeapSandboxWPF
 					case Gesture.GestureType.TYPESWIPE:
 						SwipeGesture swipe = new SwipeGesture(gesture);
 						//SafeWriteLine("Swipe id: " + swipe.Id + ", " + swipe.State + ", position: " + swipe.Position + ", direction: " + swipe.Direction + ", speed: " + swipe.Speed);
-						if (swipe.State == Gesture.GestureState.STATESTART)
-						{
-							VirtualKeyCode[] nums = {VirtualKeyCode.VK_1, VirtualKeyCode.VK_2, VirtualKeyCode.VK_3, VirtualKeyCode.VK_4};
-							if (!frame.Hands.Empty && frame.Hands[0].Fingers.Count >= 0 && frame.Hands[0].Fingers.Count < 5)
-								_InputSim.Keyboard.ModifiedKeyStroke(VirtualKeyCode.LWIN, nums[frame.Hands[0].Fingers.Count - 1]);
-						}
 						break;
 					case Gesture.GestureType.TYPEKEYTAP:
 						KeyTapGesture keytap = new KeyTapGesture(gesture);

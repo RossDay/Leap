@@ -82,59 +82,50 @@ namespace LeapSandboxWPF
 			//_InputSim.Mouse.VerticalScroll(IsUp ? 1 : -1);
 	    }
 
-	    private readonly InputSimulator _InputSim = new InputSimulator();
+	    //private readonly InputSimulator _InputSim = new InputSimulator();
         private readonly Action<string> _LogAction;
-        private bool _IsGrabbed;
-        private float _StartingY;
         private int _Progress;
-	    private int _ActiveHand;
+
+        private PersistentHand _ActiveHand = PersistentHand.CreateFinalized();
+        private bool _IsGrabbed;
 
         public void OnFrame(Frame frame)
         {
-            if (frame.Hands.IsEmpty)
-                return;
-
-            Hand hand = null;
-            if (_ActiveHand != 0)
+            if (_ActiveHand.IsFinalized && !frame.Hands.Empty)
             {
-                hand = frame.Hand(_ActiveHand);
-                if (!hand.IsValid)
-                {
-                    _ActiveHand = 0;
-                    _IsGrabbed = false;
-                }
+                _ActiveHand = PersistentHand.Create(frame.Hands.Leftmost);
+                return;
             }
-	        if (_ActiveHand == 0)
-	        {
-		        hand = frame.Hands.Leftmost;
-		        _ActiveHand = hand.Id;
-	        }
+
+            _ActiveHand.Update(frame);
+
+            // Do nothing if the hand is not yet stabilized
+            if (!_ActiveHand.IsStabilized)
+                return;
 
             // We have the same Hand as in the past and we're still grabbed.
             if (_IsGrabbed)
             {
-                if (hand.Fingers.Count >= 3)
+                if (_ActiveHand.CurrentHand.Fingers.Count >= 3)
                 {
                     _IsGrabbed = false;
-                    _LogAction(String.Format("Hand {0} Released.", _ActiveHand));
                 }
                 else
                 {
-                    var y = hand.StabilizedPalmPosition.y;
-                    _LogAction(String.Format("Hand {0} now at {1:0.0} was grabbed at {2:0.0}.", _ActiveHand, y, _StartingY));
-                    if (y < _StartingY - 10)
-                        for (var i = 0; i < Math.Floor((_StartingY - y) / 15); i++)
+                    var startY = _ActiveHand.StabilizedHand.StabilizedPalmPosition.y;
+                    var y = _ActiveHand.CurrentHand.StabilizedPalmPosition.y;
+                    _LogAction(String.Format("Hand {0} now at {1:0.0} was grabbed at {2:0.0}.", _ActiveHand.Id, y, startY));
+                    if (y < startY - 15)
+                        for (var i = 0; i < Math.Floor((startY - y) / 20); i++)
                             ScrollActiveWindow(false);
-                    else if (y > _StartingY + 10)
-                        for (var i = 0; i < Math.Floor((y - _StartingY) / 15); i++)
+                    else if (y > startY + 15)
+                        for (var i = 0; i < Math.Floor((y - startY) / 20); i++)
                             ScrollActiveWindow(true);
                 }
             }
-            else if (hand.Fingers.Count < 2)
+            else if (_ActiveHand.CurrentHand.Fingers.Count < 2)
             {
                 _IsGrabbed = true;
-                _StartingY = hand.StabilizedPalmPosition.y;
-                _LogAction(String.Format("Hand {0} Grabbed at {1:0.0}.", _ActiveHand, _StartingY));
             }
 
             foreach (var g in frame.Gestures().Where(g => g.Type == Gesture.GestureType.TYPECIRCLE))

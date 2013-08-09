@@ -69,6 +69,9 @@
     <CodeAnalysisRuleDirectories>;c:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
     <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
   </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>LeapSandboxWPF.App</StartupObject>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="LeapCSharp.NET4.0">
       <HintPath>..\LeapSDK\lib\LeapCSharp.NET4.0.dll</HintPath>
@@ -97,6 +100,7 @@
     </ApplicationDefinition>
     <Compile Include="GrabAndScroll.cs" />
     <Compile Include="LeapExtensions.cs" />
+    <Compile Include="PersistentHand.cs" />
     <Compile Include="SandboxListener.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
