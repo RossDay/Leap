@@ -91,13 +91,16 @@ namespace LeapSandboxWPF
 
         public void OnFrame(Frame frame)
         {
-            if (_ActiveHand.IsFinalized && !frame.Hands.Empty)
+	        if (!_ActiveHand.IsFinalized)
+		        _ActiveHand.Update(frame);
+
+            if (_ActiveHand.IsFinalized)
             {
-                _ActiveHand = PersistentHand.Create(frame.Hands.Leftmost);
+				_IsGrabbed = false;
+				if (!frame.Hands.Empty)
+	                _ActiveHand = PersistentHand.Create(frame.Hands.Leftmost);
                 return;
             }
-
-            _ActiveHand.Update(frame);
 
             // Do nothing if the hand is not yet stabilized
             if (!_ActiveHand.IsStabilized)
@@ -130,7 +133,7 @@ namespace LeapSandboxWPF
 
             foreach (var g in frame.Gestures().Where(g => g.Type == Gesture.GestureType.TYPECIRCLE))
             {
-                CircleGesture circle = new CircleGesture(g);
+                var circle = new CircleGesture(g);
 
                 var isClockwise = (circle.Pointable.Direction.AngleTo(circle.Normal) <= Math.PI / 4);
 
