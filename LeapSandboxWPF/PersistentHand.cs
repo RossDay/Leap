@@ -15,7 +15,7 @@ namespace LeapSandboxWPF
         public bool IsFinalized { get { return !DetectedHand.IsValid || FinalHand.IsValid; } }
 
         public Hand StabilizedHand { get; private set; }
-	    private SmoothedState<Hand> _Stabilized = new SmoothedState<Hand>(h => h.PalmVelocity.Magnitude < 5, 250000, long.MaxValue);
+	    private SmoothedBooleanState<Hand> _Stabilized = new SmoothedBooleanState<Hand>(h => h.PalmVelocity.Magnitude < 5, 250000, long.MaxValue);
         public bool IsStabilized { get { return _Stabilized.CurrentState; } }
 	    //private long _StabilizingTime { get { return _Stabilized.LastChangeTime; } }
 
@@ -59,60 +59,67 @@ namespace LeapSandboxWPF
 
             if (!IsStabilized)
             {
-	            _Stabilized.Update(CurrentHand, frame.Timestamp);
-
 				// Check for stabilization complete
-				if (_Stabilized.CurrentState)
-	                StabilizedHand = hand;
+                if (_Stabilized.Update(CurrentHand, frame.Timestamp))
+                    StabilizedHand = hand;
+                else
+                    return;
             }
         }
     }
 
-	internal class SmoothedState<T>
+    internal class SmoothedNumericalState<T, U> where U : IComparable
+    {
+    }
+
+	internal class SmoothedBooleanState<T>
 	{
-		private readonly Predicate<T> _Check;
-		private readonly long _EnterTimeThreshold;
+        private readonly Predicate<T> _EnterPredicate;
+        private readonly Predicate<T> _ExitPredicate;
+        private readonly long _EnterTimeThreshold;
 		private readonly long _ExitTimeThreshold;
 		private long _CurrentChangeTime;
 
 		public long LastChangeTime { get; private set; }
 		public bool CurrentState { get; private set; }
 
-		public SmoothedState(Predicate<T> check, long enterTime, long exitTime)
-		{
-			_Check = check;
-			_EnterTimeThreshold = enterTime;
-			_ExitTimeThreshold = exitTime;
-		}
+        public SmoothedBooleanState(Predicate<T> enterPredicate, long enterTime, long exitTime)
+        {
+            _EnterPredicate = enterPredicate;
+            _ExitPredicate = (t => !_EnterPredicate(t));
+            _EnterTimeThreshold = enterTime;
+            _ExitTimeThreshold = exitTime;
+        }
+        public SmoothedBooleanState(Predicate<T> enterPredicate, long enterTime)
+            : this(enterPredicate, enterTime, enterTime)
+        {
+        }
+        public SmoothedBooleanState(Predicate<T> enterPredicate, Predicate<T> exitPredicate, long enterTime, long exitTime)
+            : this(enterPredicate, enterTime, exitTime)
+        {
+            _ExitPredicate = exitPredicate;
+        }
 
-		public void Update(T owner, long time)
-		{
-			var current = _Check(owner);
+		public bool Update(T obj, long time)
+        {
+            var current = (CurrentState ? _ExitPredicate(obj) : _EnterPredicate(obj));
 
 			// same as current state, cancel any active change
 			if (CurrentState == current)
-			{
 				_CurrentChangeTime = 0;
-				return;
-			}
-
-			// opposite of current state
-			
 			// first time seeing change, record start time
-			if (_CurrentChangeTime == 0)
-			{
+			else if (_CurrentChangeTime == 0)
 				_CurrentChangeTime = time;
-				return;
-			}
-
 			// mid change, see if it's been long enough
-			if (time - _CurrentChangeTime > (CurrentState ? _ExitTimeThreshold : _EnterTimeThreshold))
+			else if (time - _CurrentChangeTime > (CurrentState ? _ExitTimeThreshold : _EnterTimeThreshold))
 			{
 				// change complete
 				_CurrentChangeTime = 0;
 				LastChangeTime = time;
 				CurrentState = current;
 			}
+
+            return CurrentState;
 		}
 	}
 }
