@@ -23,9 +23,11 @@ Input Actions:
 	Scroll sensitivity change
 	Mouse move
 	Mouse move sensitivity change
-	Activate Mode
-	Deactivate Mode
+	Activate Global Mode
+	Deactivate Global Mode
+	Activate Application Mode
+	Deactivate Application Mode
 	
 Action Scope: 
-	Global > Application > Activated Modes
+	Global < Activated Global Mode < Application < Activated Application Mode
 	Lowest priority wins
