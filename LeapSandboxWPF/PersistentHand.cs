@@ -15,7 +15,7 @@ namespace LeapSandboxWPF
         public bool IsFinalized { get { return !DetectedHand.IsValid || FinalHand.IsValid; } }
 
         public Hand StabilizedHand { get; private set; }
-	    private SmoothedBooleanState<Hand> _Stabilized = new SmoothedBooleanState<Hand>(h => h.PalmVelocity.Magnitude < 5, 250000, long.MaxValue);
+	    private readonly SmoothedBooleanState<Hand> _Stabilized = new SmoothedBooleanState<Hand>(h => h.PalmVelocity.Magnitude < 5, 250000, long.MaxValue);
         public bool IsStabilized { get { return _Stabilized.CurrentState; } }
 	    //private long _StabilizingTime { get { return _Stabilized.LastChangeTime; } }
 
@@ -60,7 +60,7 @@ namespace LeapSandboxWPF
             if (!IsStabilized)
             {
 				// Check for stabilization complete
-                if (_Stabilized.Update(CurrentHand, frame.Timestamp))
+                if (_Stabilized.Update(CurrentHand, frame))
                     StabilizedHand = hand;
                 else
                     return;
@@ -68,11 +68,60 @@ namespace LeapSandboxWPF
         }
     }
 
-    internal class SmoothedNumericalState<T, U> where U : IComparable
+	internal interface ISmoothedState<in T, out U>
+	{
+		U Update(T obj, Frame frame);
+	}
+
+
+	internal abstract class SmoothedNumericalState<T, U> : ISmoothedState<T, U>
     {
+	    private U _CurrentValue;
+	    private readonly Func<T, U> _ValueGetter;
+	    private long _SmoothTime;
+
+		protected SmoothedNumericalState(Func<T, U> valueGetter, long smoothTime)
+	    {
+		    _ValueGetter = valueGetter;
+	    }
+
+		protected abstract U SmoothValue(U currentValue, U newValue, double frameSmoothedImpact);
+
+	    public U Update(T obj, Frame frame)
+	    {
+		    var newValue = _ValueGetter(obj);
+
+		    var frameTimeDistance = 1000000f/frame.CurrentFramesPerSecond;
+		    var frameSmoothedImpact = frameTimeDistance/_SmoothTime;
+
+			//_CurrentValue = _CurrentValue*(1.0 - frameSmoothedImpact) + newValue*frameSmoothedImpact;
+		    _CurrentValue = SmoothValue(_CurrentValue, newValue, frameSmoothedImpact);
+
+		    return _CurrentValue;
+	    }
     }
 
-	internal class SmoothedBooleanState<T>
+	internal class SmoothedIntegerState<T> : SmoothedNumericalState<T, int>
+	{
+		public SmoothedIntegerState(Func<T, int> valueGetter, long smoothTime) : base(valueGetter, smoothTime) { }
+
+		protected override int SmoothValue(int currentValue, int newValue, double frameSmoothedImpact)
+		{
+			return Convert.ToInt32(currentValue * (1.0 * frameSmoothedImpact) + newValue * frameSmoothedImpact);
+		}
+	}
+
+	internal class SmoothedDecimalState<T> : SmoothedNumericalState<T, double>
+	{
+		public SmoothedDecimalState(Func<T, double> valueGetter, long smoothTime) : base(valueGetter, smoothTime) { }
+
+		protected override double SmoothValue(double currentValue, double newValue, double frameSmoothedImpact)
+		{
+			return currentValue * (1.0 * frameSmoothedImpact) + newValue * frameSmoothedImpact;
+		}
+	}
+
+	internal class SmoothedBooleanState<T> : ISmoothedState<T, bool>
 	{
         private readonly Predicate<T> _EnterPredicate;
         private readonly Predicate<T> _ExitPredicate;
@@ -100,9 +149,10 @@ namespace LeapSandboxWPF
             _ExitPredicate = exitPredicate;
         }
 
-		public bool Update(T obj, long time)
-        {
+		public bool Update(T obj, Frame frame)
+		{
             var current = (CurrentState ? _ExitPredicate(obj) : _EnterPredicate(obj));
+			var time = frame.Timestamp;
 
 			// same as current state, cancel any active change
 			if (CurrentState == current)
