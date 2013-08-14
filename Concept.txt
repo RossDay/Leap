@@ -1,0 +1,31 @@
+Hand State Variables:
+	Position:
+		X (Left/Right)
+		Y (Up/Down)
+		Z (Forward/Backward)
+	Orientation:	
+		Roll (Left/Right)
+		Pitch (Up/Down)
+		Yaw (Left/Right)
+	Configuration:
+		1-5 Fingers
+
+Input Triggers:
+	Boolean State (e.g. Has 3 Fingers)
+	Numerical State in Range (e.g. Roll between 75 and 105 degrees)
+	Swipe Gesture (Short/Long x Up/Down/Left/Right)
+	Circle Gesture (Small/Big x Clockwise/Counterclockwise)
+
+Input Actions:
+	Keypress(es)
+	Mouse click(s)
+	Scroll
+	Scroll sensitivity change
+	Mouse move
+	Mouse move sensitivity change
+	Activate Mode
+	Deactivate Mode
+	
+Action Scope: 
+	Global > Application > Activated Modes
+	Lowest priority wins
