@@ -8,10 +8,11 @@
 
 using System;
 using System.Linq;
+//using System.Windows.Automation;
 
 using Leap;
 using WindowsInput;
-using WindowsInput.Native;
+//using WindowsInput.Native;
 
 namespace LeapSandboxWPF
 {
