@@ -7,14 +7,16 @@ namespace LeapSandboxWPF
     {
         private readonly Func<Hand, T> _ValueGetter;
         public long SmoothTime { get; set; }
+	    private double SmoothedValue { get; set; }
 
-        protected NumericalHandState(Func<Hand, T> valueGetter, long smoothTime)
+	    protected NumericalHandState(Func<Hand, T> valueGetter, long smoothTime)
         {
             _ValueGetter = valueGetter;
             SmoothTime = smoothTime;
         }
 
-        protected abstract T SmoothValue(T currentValue, T newValue, double frameSmoothedImpact);
+        protected abstract double SmoothValue(double currentValue, T newValue, double frameSmoothedImpact);
+	    protected abstract T ConvertSmoothToCurrent(double smoothed);
 
         public override T Update(Hand hand, Frame frame)
         {
@@ -24,7 +26,8 @@ namespace LeapSandboxWPF
             var frameSmoothedImpact = frameTimeDistance / SmoothTime;
 
             //_CurrentValue = _CurrentValue*(1.0 - frameSmoothedImpact) + newValue*frameSmoothedImpact;
-            CurrentValue = SmoothValue(CurrentValue, newValue, frameSmoothedImpact);
+            SmoothedValue = SmoothValue(SmoothedValue, newValue, frameSmoothedImpact);
+	        CurrentValue = ConvertSmoothToCurrent(SmoothedValue);
 
             return CurrentValue;
         }
@@ -34,10 +37,15 @@ namespace LeapSandboxWPF
     {
         public IntegerHandState(Func<Hand, int> valueGetter, long smoothTime) : base(valueGetter, smoothTime) { }
 
-        protected override int SmoothValue(int currentValue, int newValue, double frameSmoothedImpact)
+        protected override double SmoothValue(double currentValue, int newValue, double frameSmoothedImpact)
         {
-            return Convert.ToInt32(currentValue * (1.0 * frameSmoothedImpact) + newValue * frameSmoothedImpact);
+            return currentValue * (1.0 - frameSmoothedImpact) + newValue * frameSmoothedImpact;
         }
+
+		protected override int ConvertSmoothToCurrent(double smoothed)
+		{
+			return Convert.ToInt32(smoothed);
+		}
     }
 
     internal class DecimalHandState : NumericalHandState<double>
@@ -46,7 +54,12 @@ namespace LeapSandboxWPF
 
         protected override double SmoothValue(double currentValue, double newValue, double frameSmoothedImpact)
         {
-            return currentValue * (1.0 * frameSmoothedImpact) + newValue * frameSmoothedImpact;
+            return currentValue * (1.0 - frameSmoothedImpact) + newValue * frameSmoothedImpact;
         }
+
+		protected override double ConvertSmoothToCurrent(double smoothed)
+	    {
+			return smoothed;
+	    }
     }
 }

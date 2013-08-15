@@ -8,15 +8,15 @@ namespace LeapSandboxWPF
 {
 	public static class LeapExtensions
 	{
-		public static int RollDegress(this Hand hand)
+		public static int RollDegrees(this Hand hand)
 		{
 			return Convert.ToInt32(hand.PalmNormal.Roll*180.0f/(float) Math.PI);
 		}
-		public static int PitchDegress(this Hand hand)
+		public static int PitchDegrees(this Hand hand)
 		{
             return Convert.ToInt32(hand.Direction.Pitch * 180.0f / (float)Math.PI);
 		}
-		public static int YawDegress(this Hand hand)
+		public static int YawDegrees(this Hand hand)
 		{
 			return Convert.ToInt32(hand.Direction.Yaw * 180.0f / (float)Math.PI);
 		}

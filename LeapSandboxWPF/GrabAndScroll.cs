@@ -86,21 +86,20 @@ namespace LeapSandboxWPF
         private readonly Action<string> _LogAction;
         private int _Progress;
 
-        private PersistentHand _ActiveHand = PersistentHand.CreateFinalized();
+	    private PersistentHand _ActiveHand = new PersistentHand();
         private bool _IsGrabbed;
 
         public void OnFrame(Frame frame)
         {
-	        if (!_ActiveHand.IsFinalized)
-		        _ActiveHand.Update(frame);
-
-            if (_ActiveHand.IsFinalized)
-            {
+	        if (!_ActiveHand.Update(frame))
+	        {
 				_IsGrabbed = false;
 				if (!frame.Hands.Empty)
-	                _ActiveHand = PersistentHand.Create(frame.Hands.Leftmost);
-                return;
-            }
+			        _ActiveHand.Initialize(frame.Hands.Leftmost);
+	        }
+
+			if (!_ActiveHand.IsFinalized)
+		        _LogAction(_ActiveHand.Dump());
 
             // Do nothing if the hand is not yet stabilized
             if (!_ActiveHand.IsStabilized)
@@ -117,7 +116,7 @@ namespace LeapSandboxWPF
                 {
                     var startY = _ActiveHand.StabilizedHand.StabilizedPalmPosition.y;
                     var y = _ActiveHand.CurrentHand.StabilizedPalmPosition.y;
-                    _LogAction(String.Format("Hand {0} now at {1:0.0} was grabbed at {2:0.0}.", _ActiveHand.Id, y, startY));
+                    //_LogAction(String.Format("Hand {0} now at {1:0.0} was grabbed at {2:0.0}.", _ActiveHand.Id, y, startY));
                     if (y < startY - 15)
                         for (var i = 0; i < Math.Floor((startY - y) / 20); i++)
                             ScrollActiveWindow(false);
