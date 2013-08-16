@@ -9,9 +9,9 @@ namespace LeapSandboxWPF
 
     class BaseTrigger
     {
-		public string Name { get; set; }
+        public string Name { get; set; }
 
-	    private bool _IsTriggered;
+        private bool _IsTriggered;
         public bool IsTriggered
         {
             get { return _IsTriggered; }

@@ -7,16 +7,16 @@ namespace LeapSandboxWPF
     {
         private readonly Func<Hand, T> _ValueGetter;
         public long SmoothTime { get; set; }
-	    private double SmoothedValue { get; set; }
+        private double SmoothedValue { get; set; }
 
-	    protected NumericalHandState(Func<Hand, T> valueGetter, long smoothTime)
+        protected NumericalHandState(Func<Hand, T> valueGetter, long smoothTime)
         {
             _ValueGetter = valueGetter;
             SmoothTime = smoothTime;
         }
 
         protected abstract double SmoothValue(double currentValue, T newValue, double frameSmoothedImpact);
-	    protected abstract T ConvertSmoothToCurrent(double smoothed);
+        protected abstract T ConvertSmoothToCurrent(double smoothed);
 
         public override T Update(Hand hand, Frame frame)
         {
@@ -27,7 +27,7 @@ namespace LeapSandboxWPF
 
             //_CurrentValue = _CurrentValue*(1.0 - frameSmoothedImpact) + newValue*frameSmoothedImpact;
             SmoothedValue = SmoothValue(SmoothedValue, newValue, frameSmoothedImpact);
-	        CurrentValue = ConvertSmoothToCurrent(SmoothedValue);
+            CurrentValue = ConvertSmoothToCurrent(SmoothedValue);
 
             return CurrentValue;
         }
@@ -42,10 +42,10 @@ namespace LeapSandboxWPF
             return currentValue * (1.0 - frameSmoothedImpact) + newValue * frameSmoothedImpact;
         }
 
-		protected override int ConvertSmoothToCurrent(double smoothed)
-		{
-			return Convert.ToInt32(smoothed);
-		}
+        protected override int ConvertSmoothToCurrent(double smoothed)
+        {
+            return Convert.ToInt32(smoothed);
+        }
     }
 
     internal class DecimalHandState : NumericalHandState<double>
@@ -57,9 +57,9 @@ namespace LeapSandboxWPF
             return currentValue * (1.0 - frameSmoothedImpact) + newValue * frameSmoothedImpact;
         }
 
-		protected override double ConvertSmoothToCurrent(double smoothed)
-	    {
-			return smoothed;
-	    }
+        protected override double ConvertSmoothToCurrent(double smoothed)
+        {
+            return smoothed;
+        }
     }
 }

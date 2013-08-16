@@ -9,10 +9,10 @@ namespace LeapSandboxWPF
     {
         public int MinValue { get; set; }
         public int MaxValue { get; set; }
-	    public int Resistance { get; set; }
-	    public int Stickiness { get; set; }
+        public int Resistance { get; set; }
+        public int Stickiness { get; set; }
 
-	    public RangeTrigger(HandState<int> state)
+        public RangeTrigger(HandState<int> state)
         {
             state.ValueChanged += OnStateValueChanged;
         }

@@ -68,38 +68,38 @@ namespace LeapSandboxWPF
             _LogAction = logAction;
         }
 
-	    private void ScrollActiveWindow(bool IsUp)
-	    {
+        private void ScrollActiveWindow(bool IsUp)
+        {
             //var p = GetCursorPosition();
             //focusedWin = WindowFromPoint(p.X, p.Y);
             //SendMessage(focusedWin, WM_MOUSEWHEEL, (IntPtr)MakeDWord((IsUp ? 2 : -2)*WHEEL_DELTA, 0), (IntPtr)MakeDWord(p.X, p.Y));
             //_LogAction(String.Format("Scrolling Window {0} {1} with Mouse at {2}, {3}", focusedWin.ToInt64(), (IsUp ? "Up" : "Down"), p.X, p.Y));
 
-			var focusedWin = GetActiveWindow();
-			SendMessage(focusedWin, WM_VSCROLL, (IntPtr)(IsUp ? SB_LINEUP : SB_LINEDOWN), IntPtr.Zero);
+            var focusedWin = GetActiveWindow();
+            SendMessage(focusedWin, WM_VSCROLL, (IntPtr)(IsUp ? SB_LINEUP : SB_LINEDOWN), IntPtr.Zero);
 
-			//_LogAction(String.Format("Mouse Wheel Scrolling {0}", (IsUp ? "Up" : "Down")));
-			//_InputSim.Mouse.VerticalScroll(IsUp ? 1 : -1);
-	    }
+            //_LogAction(String.Format("Mouse Wheel Scrolling {0}", (IsUp ? "Up" : "Down")));
+            //_InputSim.Mouse.VerticalScroll(IsUp ? 1 : -1);
+        }
 
-	    //private readonly InputSimulator _InputSim = new InputSimulator();
+        //private readonly InputSimulator _InputSim = new InputSimulator();
         private readonly Action<string> _LogAction;
         private int _Progress;
 
-	    private PersistentHand _ActiveHand = new PersistentHand();
+        private PersistentHand _ActiveHand = new PersistentHand();
         private bool _IsGrabbed;
 
         public void OnFrame(Frame frame)
         {
-	        if (!_ActiveHand.Update(frame))
-	        {
-				_IsGrabbed = false;
-				if (!frame.Hands.Empty)
-			        _ActiveHand.Initialize(frame.Hands.Leftmost);
-	        }
+            if (!_ActiveHand.Update(frame))
+            {
+                _IsGrabbed = false;
+                if (!frame.Hands.Empty)
+                    _ActiveHand.Initialize(frame.Hands.Leftmost);
+            }
 
-			if (!_ActiveHand.IsFinalized)
-		        _LogAction(_ActiveHand.Dump());
+            if (!_ActiveHand.IsFinalized)
+                _LogAction(_ActiveHand.Dump());
 
             // Do nothing if the hand is not yet stabilized
             if (!_ActiveHand.IsStabilized)

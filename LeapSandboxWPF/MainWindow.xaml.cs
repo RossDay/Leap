@@ -3,23 +3,23 @@ using Leap;
 
 namespace LeapSandboxWPF
 {
-	/// <summary>
-	/// Interaction logic for MainWindow.xaml
-	/// </summary>
-	public partial class MainWindow : Window
-	{
-		private SandboxListener listener;
-		private Controller controller;
+    /// <summary>
+    /// Interaction logic for MainWindow.xaml
+    /// </summary>
+    public partial class MainWindow : Window
+    {
+        private SandboxListener listener;
+        private Controller controller;
 
-		public MainWindow()
-		{
-			InitializeComponent();
-		}
+        public MainWindow()
+        {
+            InitializeComponent();
+        }
 
-		private void Window_Loaded(object sender, RoutedEventArgs e)
-		{
-			Log.Content = "Hello!\n";
-			Log.Content += "Yea!\n";
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            Log.Content = "Hello!\n";
+            Log.Content += "Yea!\n";
 
             try
             {
@@ -37,7 +37,7 @@ namespace LeapSandboxWPF
             {
                 Log.Content += ex.GetType().Name + "\n" + ex.Message + "\n" + ex.StackTrace + "\n";
             }
-		}
+        }
 
         private void OnClosing(object sender, System.ComponentModel.CancelEventArgs e)
         {
@@ -46,5 +46,5 @@ namespace LeapSandboxWPF
             listener.Dispose();
             controller.Dispose();
         }
-	}
+    }
 }
