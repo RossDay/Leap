@@ -21,22 +21,30 @@ namespace LeapSandboxWPF
 			Log.Content = "Hello!\n";
 			Log.Content += "Yea!\n";
 
-			// Create a sample listener and controller
-			listener = new SandboxListener(Log);
-			Log.Content += "Okay!\n";
-			controller = new Controller();
-			Log.Content += "Huzzah!\n";
+            try
+            {
+                // Create a sample listener and controller
+                listener = new SandboxListener(Log);
+                Log.Content += "Okay!\n";
+                controller = new Controller();
+                Log.Content += "Huzzah!\n";
 
-			// Have the sample listener receive events from the controller
-			controller.AddListener(listener);
-			Log.Content += "Bingo!\n";
+                // Have the sample listener receive events from the controller
+                controller.AddListener(listener);
+                Log.Content += "Bingo!\n";
+            }
+            catch (System.Exception ex)
+            {
+                Log.Content += ex.GetType().Name + "\n" + ex.Message + "\n" + ex.StackTrace + "\n";
+            }
 		}
 
-		private void Window_Unloaded(object sender, RoutedEventArgs e)
-		{
-			// Remove the sample listener when done
-			controller.RemoveListener(listener);
-			controller.Dispose();
-		}
+        private void OnClosing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            // Remove the sample listener when done
+            controller.RemoveListener(listener);
+            listener.Dispose();
+            controller.Dispose();
+        }
 	}
 }
