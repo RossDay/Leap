@@ -20,16 +20,24 @@ namespace LeapSandboxWPF
 	    public Hand StabilizedHand { get; private set; }
 	    private readonly BooleanHandState _Stabilized = new BooleanHandState(h => h.PalmVelocity.Magnitude < 50, 25000, long.MaxValue);
         public bool IsStabilized { get { return _Stabilized.CurrentValue; } }
-	    //private long _StabilizingTime { get { return _Stabilized.LastChangeTime; } }
 
-        private IntegerHandState _Velocity = new IntegerHandState(h => Convert.ToInt32(h.PalmVelocity.Magnitude), 100000);
-        private IntegerHandState _X = new IntegerHandState(h => Convert.ToInt32(h.PalmPosition.x), 200000);
-        private IntegerHandState _Y = new IntegerHandState(h => Convert.ToInt32(h.PalmPosition.y), 200000);
-        private IntegerHandState _Z = new IntegerHandState(h => Convert.ToInt32(h.PalmPosition.z), 200000);
-        private IntegerHandState _Pitch = new IntegerHandState(h => h.PitchDegrees(), 200000);
-        private IntegerHandState _Roll = new IntegerHandState(h => h.RollDegrees(), 200000);
-        private IntegerHandState _Yaw = new IntegerHandState(h => h.YawDegrees(), 200000);
-        private IntegerHandState _FingerCount = new IntegerHandState(h => h.Fingers.Count, 200000);
+		private readonly IntegerHandState _Velocity = new IntegerHandState(h => Convert.ToInt32(h.PalmVelocity.Magnitude), 100000);
+		private readonly IntegerHandState _X = new IntegerHandState(h => Convert.ToInt32(h.PalmPosition.x), 200000);
+		private readonly IntegerHandState _Y = new IntegerHandState(h => Convert.ToInt32(h.PalmPosition.y), 200000);
+		private readonly IntegerHandState _Z = new IntegerHandState(h => Convert.ToInt32(h.PalmPosition.z), 200000);
+		private readonly IntegerHandState _Pitch = new IntegerHandState(h => h.PitchDegrees(), 200000);
+		private readonly IntegerHandState _Roll = new IntegerHandState(h => h.RollDegrees(), 200000);
+		private readonly IntegerHandState _Yaw = new IntegerHandState(h => h.YawDegrees(), 200000);
+        private readonly IntegerHandState _FingerCount = new IntegerHandState(h => h.Fingers.Count, 100000);
+
+		public int Velocity { get { return _Velocity.CurrentValue; } }
+		public int X { get { return _X.CurrentValue; } }
+		public int Y { get { return _Y.CurrentValue; } }
+		public int Z { get { return _Z.CurrentValue; } }
+		public int Pitch { get { return _Pitch.CurrentValue; } }
+		public int Roll { get { return _Roll.CurrentValue; } }
+		public int Yaw { get { return _Yaw.CurrentValue; } }
+		public int FingerCount { get { return _FingerCount.CurrentValue; } }
 
 	    private ICollection<BaseTrigger> _Triggers;
 
@@ -109,11 +117,50 @@ namespace LeapSandboxWPF
             }
             _FingerCount.Update(hand, frame);
 
+		    UpdateGestures(frame);
+
 			return true;
         }
 
+	    private IList<Gesture> _CurrentGestures = new List<Gesture>();
 
-	    public string Dump()
+	    private void UpdateGestures(Frame frame)
+	    {
+		    var i = 0;
+		    while (i < _CurrentGestures.Count)
+			    if (!frame.Gesture(_CurrentGestures[i].Id).IsValid)
+				    _CurrentGestures.RemoveAt(i);
+			    else
+				    ++i;
+
+		    var newGestures = frame.Gestures().Where(g => g.Hands.Contains(CurrentHand));
+
+		    foreach (var g in newGestures)
+		    {
+			    var previous = _CurrentGestures.SingleOrDefault(h => h.Id == g.Id) ?? Gesture.Invalid;
+			    switch (g.Type)
+			    {
+					case Gesture.GestureType.TYPECIRCLE:
+					    UpdateGestureCircle(frame, g, previous);
+						break;
+					case Gesture.GestureType.TYPESWIPE:
+						UpdateGestureSwipe(frame, g, previous);
+						break;
+				}
+		    }
+	    }
+
+		private void UpdateGestureCircle(Frame frame, Gesture current, Gesture previous)
+		{
+			var circle = new CircleGesture(current);
+		}
+
+		private void UpdateGestureSwipe(Frame frame, Gesture current, Gesture previous)
+		{
+			var swipe = new SwipeGesture(current);
+		}
+
+		public string Dump()
 	    {
 		    var desc = new StringBuilder();
 

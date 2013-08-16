@@ -17,17 +17,18 @@ Input Triggers:
 	Circle Gesture (Small/Big x Clockwise/Counterclockwise)
 
 Input Actions:
-	Keypress(es)
-	Mouse click(s)
+	KeyPress
+	KeyHold
+	MouseClick
+	MouseDrag
 	Scroll
-	Scroll sensitivity change
-	Mouse move
-	Mouse move sensitivity change
-	Activate Global Mode
-	Deactivate Global Mode
-	Activate Application Mode
-	Deactivate Application Mode
+	ScrollSensitivityChange
+	MouseMove
+	MouseMoveSensitivityChange
+	ActivateMode
+	DeactivateMode
+	RestabilizeHand
 	
 Action Scope: 
 	Global < Activated Global Mode < Application < Activated Application Mode
-	Lowest priority wins
+	Highest priority wins

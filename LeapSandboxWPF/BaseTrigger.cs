@@ -10,8 +10,6 @@ namespace LeapSandboxWPF
     class BaseTrigger
     {
 		public string Name { get; set; }
-		public int Resistance { get; set; }
-		public int Stickiness { get; set; }
 
 	    private bool _IsTriggered;
         public bool IsTriggered
