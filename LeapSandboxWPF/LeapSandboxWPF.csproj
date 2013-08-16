@@ -101,6 +101,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="BaseAction.cs" />
     <Compile Include="BaseTrigger.cs" />
     <Compile Include="GrabAndScroll.cs" />
     <Compile Include="HandState.cs" />

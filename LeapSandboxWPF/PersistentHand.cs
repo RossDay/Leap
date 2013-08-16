@@ -42,11 +42,15 @@ namespace LeapSandboxWPF
 			FinalHand = Hand.Invalid;
 
 		    _Triggers = new List<BaseTrigger>();
-			_Triggers.Add(new RangeTrigger(_Roll) { Name = "Roll+", MinValue = 45, MaxValue = 105, Resistance = 5, Stickiness = 10 });
-			_Triggers.Add(new RangeTrigger(_Roll) { Name = "Roll-", MinValue = -105, MaxValue = -45, Resistance = 5, Stickiness = 10 });
-			_Triggers.Add(new RangeTrigger(_Pitch) { Name = "Pitch+", MinValue = 20, MaxValue = 45, Resistance = 0, Stickiness = 5 });
+			_Triggers.Add(new RangeTrigger(_Roll) { Name = "Roll+", MinValue = 30, MaxValue = 105, Resistance = 5, Stickiness = 10 });
+			_Triggers.Add(new RangeTrigger(_Roll) { Name = "Roll-", MinValue = -105, MaxValue = -30, Resistance = 5, Stickiness = 10 });
+			_Triggers.Add(new RangeTrigger(_Pitch) { Name = "Pitch+", MinValue = 25, MaxValue = 45, Resistance = 0, Stickiness = 5 });
 			_Triggers.Add(new RangeTrigger(_Pitch) { Name = "Pitch-", MinValue = -45, MaxValue = -15, Resistance = 0, Stickiness = 5 });
-		}
+
+            //var h = new KeyHoldAction(_Triggers.First(t => t.Name.Equals("Roll+")), WindowsInput.Native.VirtualKeyCode.MENU);
+            //h = new KeyHoldAction(_Triggers.First(t => t.Name.Equals("Roll-")), WindowsInput.Native.VirtualKeyCode.MENU);
+            //var p = new KeyPressAction(_Triggers.First(t => t.Name.Equals("Pitch+")), WindowsInput.Native.VirtualKeyCode.TAB);
+        }
 
 	    public void Initialize(Hand hand)
 	    {
@@ -97,7 +101,7 @@ namespace LeapSandboxWPF
             _X.Update(hand, frame);
             _Y.Update(hand, frame);
             _Z.Update(hand, frame);
-            if (_Velocity.CurrentValue < 125)
+            if (_Velocity.CurrentValue < 200)
             {
                 _Pitch.Update(hand, frame);
                 _Roll.Update(hand, frame);
