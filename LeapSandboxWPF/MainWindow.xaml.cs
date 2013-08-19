@@ -8,7 +8,7 @@ namespace LeapSandboxWPF
     /// </summary>
     public partial class MainWindow : Window
     {
-        private SandboxListener listener;
+        private Listener listener;
         private Controller controller;
 
         public MainWindow()
@@ -18,20 +18,15 @@ namespace LeapSandboxWPF
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            Log.Content = "Hello!\n";
-            Log.Content += "Yea!\n";
-
             try
             {
                 // Create a sample listener and controller
-                listener = new SandboxListener(Log);
-                Log.Content += "Okay!\n";
+                //listener = new SandboxListener(Log);
+                listener = new MainListener(Log);
                 controller = new Controller();
-                Log.Content += "Huzzah!\n";
 
                 // Have the sample listener receive events from the controller
                 controller.AddListener(listener);
-                Log.Content += "Bingo!\n";
             }
             catch (System.Exception ex)
             {

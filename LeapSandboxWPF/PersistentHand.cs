@@ -6,8 +6,9 @@ using Leap;
 
 namespace LeapSandboxWPF
 {
-    class PersistentHand
+    internal class PersistentHand : IFrameUpdate
     {
+        #region Data Members and Properties
         public int Id { get; private set; }
         public Hand DetectedHand { get; private set; }
         public long DetectedTime { get { return DetectedHand.Frame.Timestamp; } }
@@ -34,13 +35,18 @@ namespace LeapSandboxWPF
         public int X { get { return _X.CurrentValue; } }
         public int Y { get { return _Y.CurrentValue; } }
         public int Z { get { return _Z.CurrentValue; } }
+        public int OffsetX { get { return (!IsStabilized ? 0 : _X.CurrentValue - (int)StabilizedHand.PalmPosition.x); } }
+        public int OffsetY { get { return (!IsStabilized ? 0 : _Y.CurrentValue - (int)StabilizedHand.PalmPosition.y); } }
+        public int OffsetZ { get { return (!IsStabilized ? 0 : _Z.CurrentValue - (int)StabilizedHand.PalmPosition.z); } }
         public int Pitch { get { return _Pitch.CurrentValue; } }
         public int Roll { get { return _Roll.CurrentValue; } }
         public int Yaw { get { return _Yaw.CurrentValue; } }
-        public int FingerCount { get { return _FingerCount.CurrentValue; } }
+        public int FingerCount { get { return _FingerCount.CurrentValue; } } 
+        #endregion
 
         private ICollection<BaseTrigger> _Triggers;
 
+        #region Constructor / Initialize
         public PersistentHand()
         {
             Id = 0;
@@ -67,20 +73,22 @@ namespace LeapSandboxWPF
             StabilizedHand = Hand.Invalid;
             CurrentHand = hand;
             FinalHand = Hand.Invalid;
-        }
+        } 
+        #endregion
 
         public bool Update(Frame frame)
         {
-            CurrentFPS = frame.CurrentFramesPerSecond;
             if (IsFinalized)
-                return false;
+                return true;
+
+            CurrentFPS = frame.CurrentFramesPerSecond;
 
             var hand = frame.Hand(Id);
             if (!hand.IsValid)
             {
                 // Our hand is not in this frame,
-                // but we won't give up for 100ms.
-                if (frame.Timestamp - CurrentHand.Frame.Timestamp < 100000)
+                // but we won't give up for 25ms.
+                if (frame.Timestamp - CurrentHand.Frame.Timestamp < 25000)
                     return true;
 
                 // Our hand is truly gone...
@@ -89,7 +97,8 @@ namespace LeapSandboxWPF
                 StabilizedHand = Hand.Invalid;
                 CurrentHand = Hand.Invalid;
                 _Stabilized.CurrentValue = false;
-                return false;
+                Id = 0;
+                return true;
             }
 
             // We still exist in this frame, update current
@@ -157,7 +166,12 @@ namespace LeapSandboxWPF
 
         private void UpdateGestureSwipe(Frame frame, Gesture current, Gesture previous)
         {
+            if (current.State != Gesture.GestureState.STATESTOP)
+                return;
+
             var swipe = new SwipeGesture(current);
+            
+            //swipe.D
         }
 
         public string Dump()

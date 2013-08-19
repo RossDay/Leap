@@ -5,7 +5,7 @@ using System.Text;
 
 namespace LeapSandboxWPF
 {
-    class RangeTrigger : BaseTrigger
+    internal class RangeTrigger : BaseTrigger
     {
         public int MinValue { get; set; }
         public int MaxValue { get; set; }

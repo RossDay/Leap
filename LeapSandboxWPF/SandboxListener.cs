@@ -85,7 +85,7 @@ namespace LeapSandboxWPF
             // Get the most recent frame and report some basic information
             Frame frame = controller.Frame();
 
-            grabAndScroll.OnFrame(frame);
+            //grabAndScroll.OnFrame(frame);
 
             ++FrameCount;
             if (FrameCount < 100 && frame.Gestures().Count == 0)
@@ -136,7 +136,7 @@ namespace LeapSandboxWPF
                         CircleGesture circle = new CircleGesture(gesture);
 
                         // Calculate clock direction using the angle between circle normal and pointable
-                        //String clockwiseness = ((circle.Pointable.Direction.AngleTo(circle.Normal) <= Math.PI / 4) ? "clockwise" : "counterclockwise" );
+                        String clockwiseness = ((circle.Pointable.Direction.AngleTo(circle.Normal) <= Math.PI / 4) ? "clockwise" : "counterclockwise" );
                         float sweptAngle = 0;
 
                         // Calculate angle swept since last frame
@@ -146,7 +146,7 @@ namespace LeapSandboxWPF
                             sweptAngle = (circle.Progress - previousUpdate.Progress) * 360;
                         }
 
-                        //SafeWriteLine("Circle id: " + circle.Id + ", " + circle.State + ", progress: " + circle.Progress + ", radius: " + circle.Radius + ", angle: " + sweptAngle + ", " + clockwiseness); 
+                        SafeWriteLine("Circle id: " + circle.Id + ", " + circle.State + ", progress: " + circle.Progress + ", radius: " + circle.Radius + ", angle: " + sweptAngle + ", " + clockwiseness); 
                         break;
                     case Gesture.GestureType.TYPESWIPE:
                         SwipeGesture swipe = new SwipeGesture(gesture);

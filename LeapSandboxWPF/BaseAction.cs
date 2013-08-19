@@ -9,19 +9,26 @@ namespace LeapSandboxWPF
 {
     internal abstract class BaseAction
     {
-        protected InputSimulator InputSimulator = new InputSimulator();
+        protected static InputSimulator InputSimulator = new InputSimulator();
+        public bool IsFiring { get; protected set; }
 
         public BaseAction(BaseTrigger trigger)
         {
             trigger.Triggered += OnTriggered;
         }
 
-        void OnTriggered(object sender, TriggerEventArgs e)
+        private void OnTriggered(object sender, TriggerEventArgs e)
         {
             if (e.IsTriggered)
+            {
+                IsFiring = true;
                 Begin();
+            }
             else
+            {
                 End();
+                IsFiring = false;
+            }
         }
 
         protected abstract void Begin();

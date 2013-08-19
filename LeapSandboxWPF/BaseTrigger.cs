@@ -2,12 +2,12 @@
 
 namespace LeapSandboxWPF
 {
-    class TriggerEventArgs : EventArgs
+    internal class TriggerEventArgs : EventArgs
     {
         public bool IsTriggered { get; set; }
     }
 
-    class BaseTrigger
+    internal class BaseTrigger
     {
         public string Name { get; set; }
 
@@ -17,7 +17,7 @@ namespace LeapSandboxWPF
             get { return _IsTriggered; }
             set
             {
-                if (!_IsTriggered.Equals(value))
+                if (!_IsTriggered.Equals(value) || value)
                 {
                     _IsTriggered = value;
                     OnTriggered();

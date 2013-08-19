@@ -105,12 +105,15 @@
     <Compile Include="BaseTrigger.cs" />
     <Compile Include="GrabAndScroll.cs" />
     <Compile Include="HandState.cs" />
+    <Compile Include="IFrameUpdate.cs" />
     <Compile Include="LeapExtensions.cs" />
+    <Compile Include="MainListener.cs" />
     <Compile Include="PersistentHand.cs" />
     <Compile Include="RangeTrigger.cs" />
     <Compile Include="SandboxListener.cs" />
     <Compile Include="BooleanHandState.cs" />
     <Compile Include="NumericalHandState.cs" />
+    <Compile Include="VyroGesture.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
