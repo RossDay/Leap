@@ -9,6 +9,12 @@ namespace Vyrolan.VMCS.Gestures
         private readonly LinkedList<VyroGesture> _CurrentGestures = new LinkedList<VyroGesture>();
         private readonly GestureDispatcher _Dispatcher;
 
+        public GestureRecognizer(IFrameUpdater updater, GestureDispatcher dispatcher)
+        {
+            updater.RegisterForFrameUpdates(this);
+            _Dispatcher = dispatcher;
+        }
+
         public bool Update(Frame frame)
         {
             // List of Ids for current Leap Gestures
@@ -23,7 +29,7 @@ namespace Vyrolan.VMCS.Gestures
                 var next = item.Next;
                 var state = item.Value.Update(frame);
                 if (state == VyroGestureState.DiscreteComplete || state == VyroGestureState.IterationComplete)
-                    ; // TODO: Dispatch
+                    _Dispatcher.Dispatch(item.Value);
                 if (state == VyroGestureState.Invalid || state == VyroGestureState.DiscreteComplete || state == VyroGestureState.ContinuousComplete)
                     _CurrentGestures.Remove(item);
                 item = next;

@@ -2,7 +2,13 @@
 
 namespace Vyrolan.VMCS
 {
-    interface IFrameUpdate
+    internal interface IFrameUpdater
+    {
+        void RegisterForFrameUpdates(IFrameUpdate item);
+        void UnregisterForFrameUpdates(IFrameUpdate item);
+    }
+
+    internal interface IFrameUpdate
     {
         bool Update(Frame frame);
     }

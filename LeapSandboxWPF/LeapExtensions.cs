@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Leap;
 
 namespace Vyrolan.VMCS
@@ -10,15 +7,28 @@ namespace Vyrolan.VMCS
     {
         public static int RollDegrees(this Hand hand)
         {
-            return Convert.ToInt32(hand.PalmNormal.Roll*180.0f/(float) Math.PI);
+            return hand.PalmNormal.RollDegrees();
         }
         public static int PitchDegrees(this Hand hand)
         {
-            return Convert.ToInt32(hand.Direction.Pitch * 180.0f / (float)Math.PI);
+            return hand.Direction.PitchDegrees();
         }
         public static int YawDegrees(this Hand hand)
         {
-            return Convert.ToInt32(hand.Direction.Yaw * 180.0f / (float)Math.PI);
+            return hand.Direction.YawDegrees();
+        }
+
+        public static int RollDegrees(this Vector vector)
+        {
+            return Convert.ToInt32(vector.Roll*180.0f/(float) Math.PI);
+        }
+        public static int PitchDegrees(this Vector vector)
+        {
+            return Convert.ToInt32(vector.Pitch * 180.0f / (float)Math.PI);
+        }
+        public static int YawDegrees(this Vector vector)
+        {
+            return Convert.ToInt32(vector.Yaw*180.0f/(float) Math.PI);
         }
     }
 }

@@ -25,6 +25,11 @@ namespace Vyrolan.VMCS.Triggers
             }
         }
 
+        public void FireManually()
+        {
+            IsTriggered = true;
+        }
+
         public event EventHandler<TriggerEventArgs> Triggered;
         protected void OnTriggered()
         {

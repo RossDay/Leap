@@ -1,16 +1,26 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
+using Vyrolan.VMCS.Triggers;
 
 namespace Vyrolan.VMCS.Gestures
 {
     internal class GestureDispatcher
     {
-        void foo()
+        public ICollection<GestureTrigger> _Triggers = new List<GestureTrigger>();
+
+        public void RegisterTrigger(GestureTrigger trigger)
         {
-            //VyroGestureCircle c;
-            //VyroGestureSwipe s;
+            _Triggers.Add(trigger);
+        }
+        public void UnregisterTrigger(GestureTrigger trigger)
+        {
+            _Triggers.Remove(trigger);
+        }
+
+        public void Dispatch(VyroGesture gesture)
+        {
+            foreach (var trigger in _Triggers)
+                if (trigger.CheckGesture(gesture))
+                    trigger.FireManually();
         }
     }
 

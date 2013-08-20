@@ -19,10 +19,8 @@ namespace Vyrolan.VMCS.Gestures
     {
         protected long LastUpdateTime { get; set; }
 
-        protected virtual VyroGestureState UpdateGesture(Frame frame)
-        {
-            return VyroGestureState.Invalid;
-        }
+        protected abstract VyroGestureState UpdateGesture(Frame frame);
+
         public VyroGestureState Update(Frame frame)
         {
             var state = UpdateGesture(frame);

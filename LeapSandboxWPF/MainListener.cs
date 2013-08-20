@@ -6,7 +6,7 @@ using Leap;
 
 namespace Vyrolan.VMCS
 {
-    internal class MainListener : Listener
+    internal class MainListener : Listener, IFrameUpdater
     {
         private readonly Label _Log;
         private readonly Action<string> _LogAction;
