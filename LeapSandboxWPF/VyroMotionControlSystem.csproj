@@ -103,6 +103,12 @@
     </ApplicationDefinition>
     <Compile Include="BaseAction.cs" />
     <Compile Include="BaseTrigger.cs" />
+    <Compile Include="Gestures\GestureDispatcher.cs" />
+    <Compile Include="Gestures\GestureRecognizer.cs" />
+    <Compile Include="Gestures\SmoothedIntegerState.cs" />
+    <Compile Include="Gestures\VyroGestureCircle.cs" />
+    <Compile Include="Gestures\VyroGestureSwipe.cs" />
+    <Compile Include="Gestures\VyroLeapGesture.cs" />
     <Compile Include="GrabAndScroll.cs" />
     <Compile Include="HandState.cs" />
     <Compile Include="IFrameUpdate.cs" />
@@ -113,7 +119,7 @@
     <Compile Include="SandboxListener.cs" />
     <Compile Include="BooleanHandState.cs" />
     <Compile Include="NumericalHandState.cs" />
-    <Compile Include="VyroGesture.cs" />
+    <Compile Include="Gestures\VyroGesture.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
