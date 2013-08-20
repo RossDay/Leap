@@ -30,7 +30,7 @@ namespace Vyrolan.VMCS
         private readonly IntegerHandState _Pitch = new IntegerHandState(h => h.PitchDegrees(), 200000);
         private readonly IntegerHandState _Roll = new IntegerHandState(h => h.RollDegrees(), 200000);
         private readonly IntegerHandState _Yaw = new IntegerHandState(h => h.YawDegrees(), 200000);
-        private readonly IntegerHandState _FingerCount = new IntegerHandState(h => h.Fingers.Count, 100000);
+        private readonly IntegerHandState _FingerCount = new IntegerHandState(h => h.Fingers.Count, 50000);
 
         public int Velocity { get { return _Velocity.CurrentValue; } }
         public int X { get { return _X.CurrentValue; } }
@@ -124,8 +124,8 @@ namespace Vyrolan.VMCS
                 _Pitch.Update(hand, frame);
                 _Roll.Update(hand, frame);
                 _Yaw.Update(hand, frame);
+                _FingerCount.Update(hand, frame);
             }
-            _FingerCount.Update(hand, frame);
 
             UpdateGestures(frame);
 

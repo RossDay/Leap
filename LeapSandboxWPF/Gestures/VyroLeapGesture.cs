@@ -1,4 +1,6 @@
-﻿using Leap;
+﻿using System.Collections.Generic;
+using System.Linq;
+using Leap;
 
 namespace Vyrolan.VMCS.Gestures
 {
@@ -6,6 +8,11 @@ namespace Vyrolan.VMCS.Gestures
     {
         protected abstract Gesture LeapGesture { get; }
         public int LeapGestureId { get { return (LeapGesture.IsValid ? LeapGesture.Id : 0); } }
+
+        public override IEnumerable<int> HandIds
+        {
+            get { return LeapGesture.Hands.Select(h => h.Id); }
+        }
 
         public static VyroGesture CreateFromLeapGesture(Gesture gesture)
         {
@@ -24,7 +31,7 @@ namespace Vyrolan.VMCS.Gestures
         protected override VyroGestureState UpdateGesture(Frame frame)
         {
             var newGesture = frame.Gesture(LeapGesture.Id);
-
+            
             if (newGesture.IsValid && newGesture.Type == LeapGesture.Type)
                 return UpdateGestureImpl(frame);
 

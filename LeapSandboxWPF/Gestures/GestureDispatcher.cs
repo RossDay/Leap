@@ -19,7 +19,7 @@ namespace Vyrolan.VMCS.Gestures
         public void Dispatch(VyroGesture gesture)
         {
             foreach (var trigger in _Triggers)
-                if (trigger.CheckGesture(gesture))
+                if (trigger.Check(gesture))
                     trigger.FireManually();
         }
     }

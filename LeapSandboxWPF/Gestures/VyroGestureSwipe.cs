@@ -12,6 +12,7 @@ namespace Vyrolan.VMCS.Gestures
         public long Duration { get { return Gesture.Duration; } }
         private readonly SmoothedIntegerState _Velocity = new SmoothedIntegerState(50000);
         public long Velocity { get { return _Velocity.CurrentValue; } }
+        public long Distance { get { return Convert.ToInt64(Gesture.Position.DistanceTo(Gesture.StartPosition)); } }
 
         protected static VyroGesture CreateFromLeapGesture(SwipeGesture gesture)
         {
@@ -23,7 +24,7 @@ namespace Vyrolan.VMCS.Gestures
         protected override VyroGestureState UpdateGestureImpl(Frame frame)
         {
             Gesture = new SwipeGesture(frame.Gesture(Gesture.Id));
-
+            
             switch (Gesture.State)
             {
                 case Leap.Gesture.GestureState.STATEINVALID:

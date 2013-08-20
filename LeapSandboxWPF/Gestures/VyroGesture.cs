@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using Leap;
 
 namespace Vyrolan.VMCS.Gestures
@@ -20,6 +17,7 @@ namespace Vyrolan.VMCS.Gestures
         protected long LastUpdateTime { get; set; }
 
         protected abstract VyroGestureState UpdateGesture(Frame frame);
+        public abstract IEnumerable<int> HandIds { get; }
 
         public VyroGestureState Update(Frame frame)
         {

@@ -1,10 +1,33 @@
-﻿using Vyrolan.VMCS.Gestures;
+﻿using System.Linq;
+using Vyrolan.VMCS.Gestures;
 
 namespace Vyrolan.VMCS.Triggers
 {
     internal abstract class GestureTrigger : BaseTrigger
     {
-        public abstract bool CheckGesture(VyroGesture gesture);
+        public PersistentHand Hand { get; set; }
+        public bool RequiresStabilized { get; set; }
+
+        protected abstract bool CheckGesture(VyroGesture gesture);
+
+        private bool CheckHand(VyroGesture gesture)
+        {
+            // No or Finalized Hand means it can be any Hand
+            if (Hand == null || Hand.IsFinalized)
+                return true;
+
+            // If stabilized required and we're not, not a match
+            if (RequiresStabilized && !Hand.IsStabilized)
+                return false;
+
+            // If the gesture has our hand in it, it's a match
+            return gesture.HandIds.Contains(Hand.Id);
+        }
+
+        public bool Check(VyroGesture gesture)
+        {
+            return (CheckHand(gesture) && CheckGesture(gesture));
+        }
     }
 
     internal class GestureTriggerCircle : GestureTrigger
@@ -13,7 +36,7 @@ namespace Vyrolan.VMCS.Triggers
         public int MinRadius { get; set; }
         public int MaxRadius { get; set; }
 
-        public override bool CheckGesture(VyroGesture gesture)
+        protected override bool CheckGesture(VyroGesture gesture)
         {
             var circle = gesture as VyroGestureCircle;
             if (circle == null) return false;
@@ -25,10 +48,12 @@ namespace Vyrolan.VMCS.Triggers
     {
         public int MinAngle { get; set; }
         public int MaxAngle { get; set; }
+        public long MinDistance { get; set; }
+        public long MaxDistance { get; set; }
         public int MinVelocity { get; set; }
         public int MaxVelocity { get; set; }
 
-        public override bool CheckGesture(VyroGesture gesture)
+        protected override bool CheckGesture(VyroGesture gesture)
         {
             var swipe = gesture as VyroGestureSwipe;
             if (swipe == null) return false;
@@ -39,6 +64,8 @@ namespace Vyrolan.VMCS.Triggers
 
             return (
                        swipe.Velocity >= MinVelocity && swipe.Velocity <= MaxVelocity
+                       &&
+                       swipe.Distance >= MinDistance && swipe.Distance <= MaxDistance
                        &&
                        angle >= MinAngle && angle <= MaxAngle
                    );
