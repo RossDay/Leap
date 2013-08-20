@@ -4,7 +4,7 @@ using System.Linq;
 using System.Windows.Controls;
 using Leap;
 
-namespace LeapSandboxWPF
+namespace Vyrolan.VMCS
 {
     internal class MainListener : Listener
     {

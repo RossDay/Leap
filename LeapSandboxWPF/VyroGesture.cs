@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using Leap;
 
-namespace LeapSandboxWPF
+namespace Vyrolan.VMCS
 {
     internal class GestureDispatcher
     {
@@ -83,9 +83,9 @@ namespace LeapSandboxWPF
             switch (gesture.Type)
             {
                 case Gesture.GestureType.TYPECIRCLE:
-                    return VyroGestureCircle.CreateFromLeapGesture(new CircleGesture(gesture));
+                    return CreateFromLeapGesture(new CircleGesture(gesture));
                 case Gesture.GestureType.TYPESWIPE:
-                    return VyroGestureSwipe.CreateFromLeapGesture(new SwipeGesture(gesture));
+                    return CreateFromLeapGesture(new SwipeGesture(gesture));
             }
             return null;
         }
@@ -109,7 +109,7 @@ namespace LeapSandboxWPF
         protected override Gesture LeapGesture { get { return Gesture; } }
 
         public int Progress { get; private set; }
-        private SmoothedIntegerState _Radius = new SmoothedIntegerState(50000);
+        private readonly SmoothedIntegerState _Radius = new SmoothedIntegerState(50000);
         public long Radius { get { return _Radius.CurrentValue; } }
         public bool IsClockwise { get; private set; }
 
@@ -153,7 +153,7 @@ namespace LeapSandboxWPF
 
         public Vector Direction { get { return Gesture.Direction; } }
         public long Duration { get { return Gesture.Duration; } }
-        private SmoothedIntegerState _Velocity = new SmoothedIntegerState(50000);
+        private readonly SmoothedIntegerState _Velocity = new SmoothedIntegerState(50000);
         public long Velocity { get { return _Velocity.CurrentValue; } }
 
         protected static VyroGesture CreateFromLeapGesture(SwipeGesture gesture)

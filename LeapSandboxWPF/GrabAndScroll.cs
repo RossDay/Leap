@@ -6,7 +6,7 @@ using System.Text;
 using Leap;
 using WindowsInput;
 
-namespace LeapSandboxWPF
+namespace Vyrolan.VMCS
 {
     class GrabAndScroll
     {

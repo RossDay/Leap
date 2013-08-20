@@ -1,6 +1,6 @@
 ﻿using Leap;
 
-namespace LeapSandboxWPF
+namespace Vyrolan.VMCS
 {
     interface IFrameUpdate
     {

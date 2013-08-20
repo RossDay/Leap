@@ -1,4 +1,4 @@
-﻿<Window x:Class="LeapSandboxWPF.MainWindow"
+﻿<Window x:Class="Vyrolan.VMCS.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="MainWindow" Height="525" Width="800" Loaded="Window_Loaded" Closing="OnClosing">

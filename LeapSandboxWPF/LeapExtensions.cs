@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using Leap;
 
-namespace LeapSandboxWPF
+namespace Vyrolan.VMCS
 {
     public static class LeapExtensions
     {

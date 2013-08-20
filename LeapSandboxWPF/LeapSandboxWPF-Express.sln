@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual C# Express 2010
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LeapSandboxWPF", "LeapSandboxWPF.csproj", "{FC744046-C1A8-490A-BE5C-CA48402020A2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VyroMotionControlSystem", "VyroMotionControlSystem.csproj", "{FC744046-C1A8-490A-BE5C-CA48402020A2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

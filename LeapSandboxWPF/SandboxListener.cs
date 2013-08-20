@@ -14,7 +14,7 @@ using Leap;
 using WindowsInput;
 //using WindowsInput.Native;
 
-namespace LeapSandboxWPF
+namespace Vyrolan.VMCS
 {
     class SandboxListener : Listener
     {

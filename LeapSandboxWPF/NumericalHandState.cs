@@ -1,7 +1,7 @@
 ﻿using System;
 using Leap;
 
-namespace LeapSandboxWPF
+namespace Vyrolan.VMCS
 {
     internal abstract class NumericalHandState<T> : HandState<T>
     {

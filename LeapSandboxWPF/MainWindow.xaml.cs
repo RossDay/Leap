@@ -1,7 +1,7 @@
 ﻿using System.Windows;
 using Leap;
 
-namespace LeapSandboxWPF
+namespace Vyrolan.VMCS
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml

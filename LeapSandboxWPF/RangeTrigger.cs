@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace LeapSandboxWPF
+namespace Vyrolan.VMCS
 {
     internal class RangeTrigger : BaseTrigger
     {

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace LeapSandboxWPF
+namespace Vyrolan.VMCS
 {
     internal class TriggerEventArgs : EventArgs
     {

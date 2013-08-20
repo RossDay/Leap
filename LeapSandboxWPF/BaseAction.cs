@@ -5,7 +5,7 @@ using System.Text;
 using WindowsInput;
 using WindowsInput.Native;
 
-namespace LeapSandboxWPF
+namespace Vyrolan.VMCS
 {
     internal abstract class BaseAction
     {
