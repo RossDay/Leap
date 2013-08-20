@@ -35,24 +35,3 @@ Action Scope:
 
 
 
-
-
-GestureRecognizer
-	Per-frame Update
-		Check for new potential gestures
-		Update existing potential gestures
-		Activate recognized gestures
-	Gesture recognition activation sends it to the dispatcher
-
-GestureDispatcher
-	GestureTrigger register with the dispatcher to receive gestures
-	Dispatcher receives gestures from recognizer and sends to appropriate triggers
-		Checks applicability with the GestureTrigger
-
-GestureTrigger
-	Check applicability of a received gesture: IsApplicable
-	Keeps reference to non-discrete gestures for updates
-
-VyroGesture
-	Wrapper class for gestures (Leap-recognized and manual)
-

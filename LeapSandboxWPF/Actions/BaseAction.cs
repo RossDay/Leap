@@ -33,11 +33,6 @@ namespace Vyrolan.VMCS.Actions
             return _MouseButtons.Contains(key);
         }
 
-        private void foo()
-        {
-            //InputSimulator.Mouse.
-        }
-
         private void OnTriggered(object sender, TriggerEventArgs e)
         {
             if (e.IsTriggered)

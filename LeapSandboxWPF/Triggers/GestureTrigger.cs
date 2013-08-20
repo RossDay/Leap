@@ -1,27 +1,30 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using Vyrolan.VMCS.Gestures;
 
 namespace Vyrolan.VMCS.Triggers
 {
     internal abstract class GestureTrigger : BaseTrigger
     {
-        public PersistentHand Hand { get; set; }
+        public Func<PersistentHand> HandGetter { get; set; }
         public bool RequiresStabilized { get; set; }
 
         protected abstract bool CheckGesture(VyroGesture gesture);
 
         private bool CheckHand(VyroGesture gesture)
         {
+            var hand = HandGetter();
+
             // No or Finalized Hand means it can be any Hand
-            if (Hand == null || Hand.IsFinalized)
+            if (hand == null || hand.IsFinalized)
                 return true;
 
             // If stabilized required and we're not, not a match
-            if (RequiresStabilized && !Hand.IsStabilized)
+            if (RequiresStabilized && !hand.IsStabilized)
                 return false;
 
             // If the gesture has our hand in it, it's a match
-            return gesture.HandIds.Contains(Hand.Id);
+            return gesture.HandIds.Contains(hand.Id);
         }
 
         public bool Check(VyroGesture gesture)
