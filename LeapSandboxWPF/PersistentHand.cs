@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using Leap;
 using Vyrolan.VMCS.Triggers;
@@ -32,13 +31,17 @@ namespace Vyrolan.VMCS
         private readonly IntegerHandState _Yaw = new IntegerHandState(h => h.YawDegrees(), 200000);
         private readonly IntegerHandState _FingerCount = new IntegerHandState(h => h.Fingers.Count, 50000);
 
+        public PositionTracker HandTracker { get; private set; }
+
         public int Velocity { get { return _Velocity.CurrentValue; } }
         public int X { get { return _X.CurrentValue; } }
         public int Y { get { return _Y.CurrentValue; } }
         public int Z { get { return _Z.CurrentValue; } }
+        public Vector Position { get { return new Vector(X, Y, Z); } }
         public int OffsetX { get { return (!IsStabilized ? 0 : _X.CurrentValue - (int)StabilizedHand.PalmPosition.x); } }
         public int OffsetY { get { return (!IsStabilized ? 0 : _Y.CurrentValue - (int)StabilizedHand.PalmPosition.y); } }
         public int OffsetZ { get { return (!IsStabilized ? 0 : _Z.CurrentValue - (int)StabilizedHand.PalmPosition.z); } }
+        public Vector OffsetPosition { get { return new Vector(OffsetX, OffsetY, OffsetZ); } }
         public int Pitch { get { return _Pitch.CurrentValue; } }
         public int Roll { get { return _Roll.CurrentValue; } }
         public int Yaw { get { return _Yaw.CurrentValue; } }
@@ -61,6 +64,8 @@ namespace Vyrolan.VMCS
             _Triggers.Add(new RangeTrigger(_Roll) { Name = "Roll-", MinValue = -105, MaxValue = -30, Resistance = 5, Stickiness = 10 });
             _Triggers.Add(new RangeTrigger(_Pitch) { Name = "Pitch+", MinValue = 25, MaxValue = 45, Resistance = 0, Stickiness = 5 });
             _Triggers.Add(new RangeTrigger(_Pitch) { Name = "Pitch-", MinValue = -45, MaxValue = -15, Resistance = 0, Stickiness = 5 });
+
+            HandTracker = new PositionTracker(() => Position);
 
             //var h = new KeyHoldAction(_Triggers.First(t => t.Name.Equals("Roll+")), WindowsInput.Native.VirtualKeyCode.MENU);
             //h = new KeyHoldAction(_Triggers.First(t => t.Name.Equals("Roll-")), WindowsInput.Native.VirtualKeyCode.MENU);
@@ -126,55 +131,12 @@ namespace Vyrolan.VMCS
                 _Yaw.Update(hand, frame);
                 _FingerCount.Update(hand, frame);
             }
-
-            UpdateGestures(frame);
+            HandTracker.Update(frame);
 
             return true;
         }
 
-        private IList<Gesture> _CurrentGestures = new List<Gesture>();
-
-        private void UpdateGestures(Frame frame)
-        {
-            var i = 0;
-            while (i < _CurrentGestures.Count)
-                if (!frame.Gesture(_CurrentGestures[i].Id).IsValid)
-                    _CurrentGestures.RemoveAt(i);
-                else
-                    ++i;
-
-            var newGestures = frame.Gestures().Where(g => g.Hands.Contains(CurrentHand));
-
-            foreach (var g in newGestures)
-            {
-                var previous = _CurrentGestures.SingleOrDefault(h => h.Id == g.Id) ?? Gesture.Invalid;
-                switch (g.Type)
-                {
-                    case Gesture.GestureType.TYPECIRCLE:
-                        UpdateGestureCircle(frame, g, previous);
-                        break;
-                    case Gesture.GestureType.TYPESWIPE:
-                        UpdateGestureSwipe(frame, g, previous);
-                        break;
-                }
-            }
-        }
-
-        private void UpdateGestureCircle(Frame frame, Gesture current, Gesture previous)
-        {
-            var circle = new CircleGesture(current);
-        }
-
-        private void UpdateGestureSwipe(Frame frame, Gesture current, Gesture previous)
-        {
-            if (current.State != Gesture.GestureState.STATESTOP)
-                return;
-
-            var swipe = new SwipeGesture(current);
-            
-            //swipe.D
-        }
-
+        #region Dump
         public string Dump()
         {
             var desc = new StringBuilder();
@@ -205,6 +167,7 @@ namespace Vyrolan.VMCS
             }
 
             return desc.ToString();
-        }
+        } 
+        #endregion
     }
 }

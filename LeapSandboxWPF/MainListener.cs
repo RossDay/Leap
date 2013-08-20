@@ -83,11 +83,13 @@ namespace Vyrolan.VMCS
 
         public void RegisterForFrameUpdates(IFrameUpdate item)
         {
-            _FrameUpdateItems.AddLast(item);
+            lock (_FrameUpdateItems)
+                _FrameUpdateItems.AddLast(item);
         }
         public void UnregisterForFrameUpdates(IFrameUpdate item)
         {
-            _FrameUpdateItems.Remove(item);
+            lock (_FrameUpdateItems)
+                _FrameUpdateItems.Remove(item);
         }
 
         public override void OnFrame(Controller controller)
@@ -96,13 +98,16 @@ namespace Vyrolan.VMCS
             var frame = controller.Frame();
 
             // Update all registered items
-            var item = _FrameUpdateItems.First;
-            while (item != null)
+            lock (_FrameUpdateItems)
             {
-                var next = item.Next;
-                if (!item.Value.Update(frame))
-                    _FrameUpdateItems.Remove(item);
-                item = next;
+                var item = _FrameUpdateItems.First;
+                while (item != null)
+                {
+                    var next = item.Next;
+                    if (!item.Value.Update(frame))
+                        _FrameUpdateItems.Remove(item);
+                    item = next;
+                }
             }
 
             foreach (var h in frame.Hands)

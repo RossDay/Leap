@@ -105,6 +105,8 @@
     <Compile Include="Actions\KeyboardActions.cs" />
     <Compile Include="Actions\MouseClickActions.cs" />
     <Compile Include="Actions\MouseScrollAction.cs" />
+    <Compile Include="Actions\PositionTrackingAction.cs" />
+    <Compile Include="PositionTracker.cs" />
     <Compile Include="Triggers\BaseTrigger.cs" />
     <Compile Include="Gestures\GestureDispatcher.cs" />
     <Compile Include="Gestures\GestureRecognizer.cs" />
