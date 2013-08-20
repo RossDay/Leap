@@ -101,8 +101,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="BaseAction.cs" />
-    <Compile Include="BaseTrigger.cs" />
+    <Compile Include="Actions\BaseAction.cs" />
+    <Compile Include="Actions\KeyboardActions.cs" />
+    <Compile Include="Triggers\BaseTrigger.cs" />
     <Compile Include="Gestures\GestureDispatcher.cs" />
     <Compile Include="Gestures\GestureRecognizer.cs" />
     <Compile Include="Gestures\SmoothedIntegerState.cs" />
@@ -115,7 +116,8 @@
     <Compile Include="LeapExtensions.cs" />
     <Compile Include="MainListener.cs" />
     <Compile Include="PersistentHand.cs" />
-    <Compile Include="RangeTrigger.cs" />
+    <Compile Include="Triggers\GestureTrigger.cs" />
+    <Compile Include="Triggers\RangeTrigger.cs" />
     <Compile Include="SandboxListener.cs" />
     <Compile Include="BooleanHandState.cs" />
     <Compile Include="NumericalHandState.cs" />

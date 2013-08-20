@@ -30,18 +30,4 @@ namespace Vyrolan.VMCS.Gestures
             return state;
         }
     }
-
-
-    internal class GestureTrigger : BaseTrigger
-    {
-        public VyroGesture Gesture { get; set; }
-    }
-
-    internal class GestureTriggerCircle : GestureTrigger
-    {
-        private new VyroGestureCircle Gesture
-        {
-            get { return base.Gesture as VyroGestureCircle; }
-        }
-    }
 }

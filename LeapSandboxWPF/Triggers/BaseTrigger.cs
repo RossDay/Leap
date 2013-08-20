@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Vyrolan.VMCS
+namespace Vyrolan.VMCS.Triggers
 {
     internal class TriggerEventArgs : EventArgs
     {
