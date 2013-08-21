@@ -45,11 +45,6 @@ namespace Vyrolan.VMCS.Actions
             }
         }
 
-        public PositionTrackingAction(BaseTrigger trigger)
-            : base(trigger)
-        {
-        }
-
         protected override void Begin()
         {
             Tracker.Enable();

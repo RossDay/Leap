@@ -21,10 +21,6 @@ namespace Vyrolan.VMCS.Actions
             }
         }
 
-        public MouseClickAction(BaseTrigger trigger) : base(trigger)
-        {
-        }
-
         protected override void Begin()
         {
             switch (Button)
@@ -46,7 +42,6 @@ namespace Vyrolan.VMCS.Actions
 
         protected override void End()
         {
-            
         }
     }
 
@@ -63,11 +58,6 @@ namespace Vyrolan.VMCS.Actions
                 else
                     throw new ArgumentOutOfRangeException("value", "Must be the left or right mouse button.");
             }
-        }
-
-        public MouseDragAction(BaseTrigger trigger)
-            : base(trigger)
-        {
         }
 
         protected override void Begin()
@@ -96,5 +86,4 @@ namespace Vyrolan.VMCS.Actions
             }
         }
     }
-
 }

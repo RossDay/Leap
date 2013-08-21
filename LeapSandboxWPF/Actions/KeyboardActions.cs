@@ -7,11 +7,6 @@ namespace Vyrolan.VMCS.Actions
 {
     internal class KeyPressAction : BaseAction
     {
-        public KeyPressAction(BaseTrigger trigger)
-            : base(trigger)
-        {
-        }
-
         private readonly ICollection<VirtualKeyCode> _Modifiers = new List<VirtualKeyCode>(4);
         private VirtualKeyCode _Key;
         private bool KeySet { get; set; }
@@ -64,11 +59,6 @@ namespace Vyrolan.VMCS.Actions
             }
         }
 
-        public KeyHoldAction(BaseTrigger trigger)
-            : base(trigger)
-        {
-        }
-
         protected override void Begin()
         {
             if (KeySet)
@@ -85,11 +75,6 @@ namespace Vyrolan.VMCS.Actions
     internal class KeyMacroAction : BaseAction
     {
         public ICollection<VirtualKeyCode> _Keys = new List<VirtualKeyCode>();
-
-        public KeyMacroAction(BaseTrigger trigger)
-            : base(trigger)
-        {
-        }
 
         public void AddKey(VirtualKeyCode key)
         {

@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using Vyrolan.VMCS.Triggers;
 using WindowsInput;
 using WindowsInput.Native;
@@ -8,11 +9,19 @@ namespace Vyrolan.VMCS.Actions
     internal abstract class BaseAction
     {
         protected static InputSimulator InputSimulator = new InputSimulator();
+        private readonly object _Lock = new object();
+        private ICollection<BaseTrigger> _Triggers = new List<BaseTrigger>();
         public bool IsFiring { get; protected set; }
 
-        protected BaseAction(BaseTrigger trigger)
+        public void RegisterTrigger(BaseTrigger trigger)
         {
             trigger.Triggered += OnTriggered;
+            _Triggers.Add(trigger);
+        }
+        public void UnregisterTrigger(BaseTrigger trigger)
+        {
+            if (_Triggers.Remove(trigger))
+                trigger.Triggered -= OnTriggered;
         }
 
         private static VirtualKeyCode[] _Modifiers =
@@ -35,16 +44,23 @@ namespace Vyrolan.VMCS.Actions
 
         private void OnTriggered(object sender, TriggerEventArgs e)
         {
-            if (e.IsTriggered)
-            {
-                IsFiring = true;
-                Begin();
-            }
-            else
-            {
-                End();
-                IsFiring = false;
-            }
+            lock (_Lock)
+                if (e.IsTriggered)
+                {
+                    if (!IsFiring)
+                    {
+                        IsFiring = true;
+                        Begin();
+                    }
+                }
+                else
+                {
+                    if (IsFiring)
+                    {
+                        End();
+                        IsFiring = false;
+                    }
+                }
         }
 
         protected abstract void Begin();

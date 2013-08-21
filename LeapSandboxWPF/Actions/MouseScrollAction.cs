@@ -11,11 +11,6 @@ namespace Vyrolan.VMCS.Actions
         public bool IsAccelerated { get; set; }
         public bool IsInverted { get; set; }
 
-        public MouseScrollAction(BaseTrigger trigger)
-            : base(trigger)
-        {
-        }
-
         protected override IEnumerable<PositionTrackingAxis> ValidAxes 
         {
             get { return new[] { PositionTrackingAxis.X, PositionTrackingAxis.Y, PositionTrackingAxis.Z }; }
@@ -32,10 +27,6 @@ namespace Vyrolan.VMCS.Actions
     internal class MouseMoveAction : PositionTrackingAction
     {
         private static readonly int _Sensitivity = 10;
-        public MouseMoveAction(BaseTrigger trigger)
-            : base(trigger)
-        {
-        }
 
         protected override IEnumerable<PositionTrackingAxis> ValidAxes
         {
