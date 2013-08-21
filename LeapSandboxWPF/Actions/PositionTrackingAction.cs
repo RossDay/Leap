@@ -7,23 +7,53 @@ using Vyrolan.VMCS.Triggers;
 
 namespace Vyrolan.VMCS.Actions
 {
-    internal class PositionTrackingAction : BaseAction
+    internal enum PositionTrackingAxis
     {
-        private PositionTracker Tracker { get; set; }
-        private Vector StartingPosition { get; set; }
-        private bool IsEnabled { get; set; }
+        X, Y, Z, Screen, Table
+    }
 
-        public PositionTrackingAction(BaseTrigger trigger, PositionTracker tracker)
+    internal abstract class PositionTrackingAction : BaseAction
+    {
+        public int MinDistance { get; set; }
+        public bool IsContinuous { get; set; }
+
+        protected abstract IEnumerable<PositionTrackingAxis> ValidAxes { get; }
+        private PositionTrackingAxis _Axis;
+        public PositionTrackingAxis Axis
+        {
+            get { return _Axis; }
+            set
+            {
+                if (!ValidAxes.Contains(value))
+                    throw new ArgumentOutOfRangeException("Axis");
+                _Axis = value;
+            }
+        }
+
+        protected Vector CurrentPosition { get; set; }
+        protected bool IsEnabled { get; private set; }
+        private PositionTracker _Tracker;
+        protected PositionTracker Tracker 
+        {
+            get { return _Tracker; }
+            set
+            {
+                if (_Tracker != null)
+                    _Tracker.PositionUpdated -= OnPositionUpdated;
+                _Tracker = value;
+                _Tracker.PositionUpdated += OnPositionUpdated;
+            }
+        }
+
+        public PositionTrackingAction(BaseTrigger trigger)
             : base(trigger)
         {
-            Tracker = tracker;
-            Tracker.PositionUpdated += OnPositionUpdated;
         }
 
         protected override void Begin()
         {
             Tracker.Enable();
-            StartingPosition = Tracker.CurrentPosition;
+            CurrentPosition = Tracker.CurrentPosition;
             IsEnabled = true;
         }
 
@@ -33,9 +63,34 @@ namespace Vyrolan.VMCS.Actions
             Tracker.Disable();
         }
 
-        void OnPositionUpdated(object sender, PositionTrackerEventArgs e)
+        private Vector NormalizeVectorToAxis(Vector vector)
         {
-            var position = e.NewPosition;
+            switch (Axis)
+            {
+                case PositionTrackingAxis.X:
+                    return new Vector(vector.x, 0, 0);
+                case PositionTrackingAxis.Y:
+                    return new Vector(0, vector.y, 0);
+                case PositionTrackingAxis.Z:
+                    return new Vector(0, 0, vector.z);
+                case PositionTrackingAxis.Screen:
+                    return new Vector(vector.x, vector.y, 0);
+                default:
+                    return new Vector(vector.x, 0, vector.z);
+            }
+        }
+
+        protected abstract void ApplyPositionUpdate(Vector change);
+        private void OnPositionUpdated(object sender, PositionTrackerEventArgs e)
+        {
+            var temp = NormalizeVectorToAxis(e.NewPosition);
+            var change = temp - CurrentPosition;
+            if (change.Magnitude >= MinDistance)
+            {
+                ApplyPositionUpdate(change);
+                if (!IsContinuous)
+                    CurrentPosition = temp;
+            }
         }
     }
 }
