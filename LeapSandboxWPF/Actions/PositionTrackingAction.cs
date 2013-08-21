@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Leap;
-using Vyrolan.VMCS.Triggers;
 
 namespace Vyrolan.VMCS.Actions
 {
@@ -25,7 +23,7 @@ namespace Vyrolan.VMCS.Actions
             set
             {
                 if (!ValidAxes.Contains(value))
-                    throw new ArgumentOutOfRangeException("Axis");
+                    throw new ArgumentOutOfRangeException();
                 _Axis = value;
             }
         }
@@ -73,6 +71,21 @@ namespace Vyrolan.VMCS.Actions
                 default:
                     return new Vector(vector.x, 0, vector.z);
             }
+        }
+
+        protected float GetX(Vector vector)
+        {
+            var temp = NormalizeVectorToAxis(vector);
+            if (Axis == PositionTrackingAxis.X || Axis == PositionTrackingAxis.Y || Axis == PositionTrackingAxis.Z)
+                return temp.x + temp.y + temp.z;
+            return temp.x;
+        }
+        protected float GetY(Vector vector)
+        {
+            var temp = NormalizeVectorToAxis(vector);
+            if (Axis == PositionTrackingAxis.X || Axis == PositionTrackingAxis.Y || Axis == PositionTrackingAxis.Z)
+                return 0;
+            return temp.y + temp.z;
         }
 
         protected abstract void ApplyPositionUpdate(Vector change);

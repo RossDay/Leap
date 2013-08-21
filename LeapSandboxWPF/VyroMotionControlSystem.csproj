@@ -104,8 +104,10 @@
     <Compile Include="Actions\BaseAction.cs" />
     <Compile Include="Actions\KeyboardActions.cs" />
     <Compile Include="Actions\MouseClickActions.cs" />
+    <Compile Include="Actions\MouseMoveAction.cs" />
     <Compile Include="Actions\MouseScrollAction.cs" />
     <Compile Include="Actions\PositionTrackingAction.cs" />
+    <Compile Include="Actions\ScrollAction.cs" />
     <Compile Include="Native.cs" />
     <Compile Include="PositionTracker.cs" />
     <Compile Include="Triggers\BaseTrigger.cs" />

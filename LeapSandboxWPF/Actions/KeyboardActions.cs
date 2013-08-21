@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using Vyrolan.VMCS.Triggers;
 using WindowsInput.Native;
 
 namespace Vyrolan.VMCS.Actions

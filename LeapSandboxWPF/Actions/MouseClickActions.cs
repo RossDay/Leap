@@ -1,5 +1,4 @@
 ﻿using System;
-using Vyrolan.VMCS.Triggers;
 using WindowsInput.Native;
 
 namespace Vyrolan.VMCS.Actions
