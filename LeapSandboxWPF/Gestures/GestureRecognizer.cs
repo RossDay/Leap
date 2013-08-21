@@ -9,9 +9,8 @@ namespace Vyrolan.VMCS.Gestures
         private readonly LinkedList<VyroGesture> _CurrentGestures = new LinkedList<VyroGesture>();
         private readonly GestureDispatcher _Dispatcher;
 
-        public GestureRecognizer(IFrameUpdater updater, GestureDispatcher dispatcher)
+        public GestureRecognizer(GestureDispatcher dispatcher)
         {
-            updater.RegisterForFrameUpdates(this);
             _Dispatcher = dispatcher;
         }
 

@@ -1,5 +1,4 @@
 ﻿using System.Windows;
-using Leap;
 
 namespace Vyrolan.VMCS
 {
@@ -8,8 +7,7 @@ namespace Vyrolan.VMCS
     /// </summary>
     public partial class MainWindow : Window
     {
-        private Listener listener;
-        private Controller controller;
+        private ControlSystem _ControlSystem;
 
         public MainWindow()
         {
@@ -20,13 +18,7 @@ namespace Vyrolan.VMCS
         {
             try
             {
-                // Create a sample listener and controller
-                //listener = new SandboxListener(Log);
-                listener = new MainListener(Log);
-                controller = new Controller();
-
-                // Have the sample listener receive events from the controller
-                controller.AddListener(listener);
+                _ControlSystem = new ControlSystem(Log);
             }
             catch (System.Exception ex)
             {
@@ -36,10 +28,7 @@ namespace Vyrolan.VMCS
 
         private void OnClosing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            // Remove the sample listener when done
-            controller.RemoveListener(listener);
-            listener.Dispose();
-            controller.Dispose();
+            _ControlSystem.Dispose();
         }
     }
 }

@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Text;
 using Leap;
-using Vyrolan.VMCS.Triggers;
 
 namespace Vyrolan.VMCS
 {
@@ -11,10 +9,11 @@ namespace Vyrolan.VMCS
         #region Data Members and Properties
         public int Id { get; private set; }
         public Hand DetectedHand { get; private set; }
-        public long DetectedTime { get { return DetectedHand.Frame.Timestamp; } }
+        //public long DetectedTime { get { return DetectedHand.Frame.Timestamp; } }
         public Hand FinalHand { get; private set; }
         public bool IsFinalized { get { return !DetectedHand.IsValid || FinalHand.IsValid; } }
         public Hand CurrentHand { get; private set; }
+        public long CurrentHandTime { get; private set; }
         public long Duration { get { return CurrentHand.Frame.Timestamp - (StabilizedHand.IsValid ? StabilizedHand : DetectedHand).Frame.Timestamp; } }
         public float CurrentFPS { get; set; }
 
@@ -48,8 +47,6 @@ namespace Vyrolan.VMCS
         public int FingerCount { get { return _FingerCount.CurrentValue; } } 
         #endregion
 
-        private ICollection<BaseTrigger> _Triggers;
-
         #region Constructor / Initialize
         public PersistentHand()
         {
@@ -70,16 +67,6 @@ namespace Vyrolan.VMCS
             _FingerCount = new IntegerHandState(this, h => h.Fingers.Count, 50000);
 
             HandTracker = new PositionTracker(() => Position);
-
-            _Triggers = new List<BaseTrigger>();
-            _Triggers.Add(new RangeTrigger(_Roll) { Name = "Roll+", MinValue = 30, MaxValue = 105, Resistance = 5, Stickiness = 10 });
-            _Triggers.Add(new RangeTrigger(_Roll) { Name = "Roll-", MinValue = -105, MaxValue = -30, Resistance = 5, Stickiness = 10 });
-            _Triggers.Add(new RangeTrigger(_Pitch) { Name = "Pitch+", MinValue = 25, MaxValue = 45, Resistance = 0, Stickiness = 5 });
-            _Triggers.Add(new RangeTrigger(_Pitch) { Name = "Pitch-", MinValue = -45, MaxValue = -15, Resistance = 0, Stickiness = 5 });
-
-            //var h = new KeyHoldAction(_Triggers.First(t => t.Name.Equals("Roll+")), WindowsInput.Native.VirtualKeyCode.MENU);
-            //h = new KeyHoldAction(_Triggers.First(t => t.Name.Equals("Roll-")), WindowsInput.Native.VirtualKeyCode.MENU);
-            //var p = new KeyPressAction(_Triggers.First(t => t.Name.Equals("Pitch+")), WindowsInput.Native.VirtualKeyCode.TAB);
         }
 
         public void Initialize(Hand hand)
@@ -105,7 +92,7 @@ namespace Vyrolan.VMCS
             {
                 // Our hand is not in this frame,
                 // but we won't give up for 25ms.
-                if (frame.Timestamp - CurrentHand.Frame.Timestamp < 25000)
+                if (frame.Timestamp - CurrentHandTime < 25000)
                     return true;
 
                 // Our hand is truly gone...
@@ -119,8 +106,8 @@ namespace Vyrolan.VMCS
             }
 
             // We still exist in this frame, update current
-            //var previous = CurrentHand;
             CurrentHand = hand;
+            CurrentHandTime = frame.Timestamp;
 
             if (!IsStabilized)
             {
@@ -196,15 +183,6 @@ namespace Vyrolan.VMCS
             //desc.AppendLine();
             desc.AppendFormat("Orientation: Roll = {0}, Pitch = {1}, Yaw = {2}", _Roll.CurrentValue, _Pitch.CurrentValue, _Yaw.CurrentValue);
             desc.AppendLine();
-
-            if (_Triggers.Count > 0)
-            {
-                desc.Append("Activated Triggers: ");
-                foreach (var t in _Triggers)
-                    if (t.IsTriggered)
-                        desc.Append(t.Name).Append(", ");
-                desc.Length -= 2;
-            }
 
             return desc.ToString();
         } 

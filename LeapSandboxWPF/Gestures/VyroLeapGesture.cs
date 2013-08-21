@@ -19,9 +19,9 @@ namespace Vyrolan.VMCS.Gestures
             switch (gesture.Type)
             {
                 case Gesture.GestureType.TYPECIRCLE:
-                    return CreateFromLeapGesture(new CircleGesture(gesture));
+                    return VyroGestureCircle.CreateFromLeapGesture(new CircleGesture(gesture));
                 case Gesture.GestureType.TYPESWIPE:
-                    return CreateFromLeapGesture(new SwipeGesture(gesture));
+                    return VyroGestureSwipe.CreateFromLeapGesture(new SwipeGesture(gesture));
             }
             return null;
         }

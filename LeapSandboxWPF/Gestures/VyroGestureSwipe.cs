@@ -14,7 +14,7 @@ namespace Vyrolan.VMCS.Gestures
         public long Velocity { get { return _Velocity.CurrentValue; } }
         public long Distance { get { return Convert.ToInt64(Gesture.Position.DistanceTo(Gesture.StartPosition)); } }
 
-        protected static VyroGesture CreateFromLeapGesture(SwipeGesture gesture)
+        public static VyroGesture CreateFromLeapGesture(SwipeGesture gesture)
         {
             var s = new VyroGestureSwipe { Gesture = gesture };
             s._Velocity.Initialize(Convert.ToInt64(s.Gesture.Speed));

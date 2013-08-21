@@ -13,7 +13,7 @@ namespace Vyrolan.VMCS.Gestures
         public long Radius { get { return _Radius.CurrentValue; } }
         public bool IsClockwise { get; private set; }
 
-        protected static VyroGesture CreateFromLeapGesture(CircleGesture gesture)
+        public static VyroGesture CreateFromLeapGesture(CircleGesture gesture)
         {
             var c = new VyroGestureCircle { Gesture = gesture };
             c._Radius.Initialize(Convert.ToInt64(c.Gesture.Radius));

@@ -108,6 +108,8 @@
     <Compile Include="Actions\MouseScrollAction.cs" />
     <Compile Include="Actions\PositionTrackingAction.cs" />
     <Compile Include="Actions\ScrollAction.cs" />
+    <Compile Include="ControlSystem.cs" />
+    <Compile Include="HandManager.cs" />
     <Compile Include="Native.cs" />
     <Compile Include="PositionTracker.cs" />
     <Compile Include="Triggers\BaseTrigger.cs" />
