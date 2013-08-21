@@ -83,7 +83,12 @@ namespace Vyrolan.VMCS
                 if (disposing)
                 {
                     // dispose-only, i.e. non-finalizable logic
-                    if (_Listener != null) _Listener.Dispose();
+                    if (_Listener != null)
+                    {
+                        if (_Controller != null)
+                            _Controller.RemoveListener(_Listener);
+                        _Listener.Dispose();
+                    }
                     if (_Controller != null) _Controller.Dispose();
                 }
                 // shared cleanup logic goes here
