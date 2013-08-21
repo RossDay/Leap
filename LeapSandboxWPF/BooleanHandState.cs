@@ -14,26 +14,27 @@ namespace Vyrolan.VMCS
 
         public long LastChangeTime { get; private set; }
 
-        public BooleanHandState(Predicate<Hand> enterPredicate, long enterTime, long exitTime)
+        public BooleanHandState(PersistentHand hand, Predicate<Hand> enterPredicate, long enterTime, long exitTime)
+            : base(hand)
         {
             _EnterPredicate = enterPredicate;
             _ExitPredicate = (t => !_EnterPredicate(t));
             EnterTimeThreshold = enterTime;
             ExitTimeThreshold = exitTime;
         }
-        public BooleanHandState(Predicate<Hand> enterPredicate, long enterTime)
-            : this(enterPredicate, enterTime, enterTime)
+        public BooleanHandState(PersistentHand hand, Predicate<Hand> enterPredicate, long enterTime)
+            : this(hand, enterPredicate, enterTime, enterTime)
         {
         }
-        public BooleanHandState(Predicate<Hand> enterPredicate, Predicate<Hand> exitPredicate, long enterTime, long exitTime)
-            : this(enterPredicate, enterTime, exitTime)
+        public BooleanHandState(PersistentHand hand, Predicate<Hand> enterPredicate, Predicate<Hand> exitPredicate, long enterTime, long exitTime)
+            : this(hand, enterPredicate, enterTime, exitTime)
         {
             _ExitPredicate = exitPredicate;
         }
 
-        public override bool Update(Hand hand, Frame frame)
+        public override bool Update(Frame frame)
         {
-            var current = (CurrentValue ? _ExitPredicate(hand) : _EnterPredicate(hand));
+            var current = (CurrentValue ? _ExitPredicate(Hand.CurrentHand) : _EnterPredicate(Hand.CurrentHand));
             var time = frame.Timestamp;
 
             // same as current state, cancel any active change

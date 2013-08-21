@@ -9,7 +9,8 @@ namespace Vyrolan.VMCS
         public long SmoothTime { get; set; }
         private double SmoothedValue { get; set; }
 
-        protected NumericalHandState(Func<Hand, T> valueGetter, long smoothTime)
+        protected NumericalHandState(PersistentHand hand, Func<Hand, T> valueGetter, long smoothTime)
+            : base(hand)
         {
             _ValueGetter = valueGetter;
             SmoothTime = smoothTime;
@@ -18,9 +19,9 @@ namespace Vyrolan.VMCS
         protected abstract double SmoothValue(double currentValue, T newValue, double frameSmoothedImpact);
         protected abstract T ConvertSmoothToCurrent(double smoothed);
 
-        public override T Update(Hand hand, Frame frame)
+        public override bool Update(Frame frame)
         {
-            var newValue = _ValueGetter(hand);
+            var newValue = _ValueGetter(Hand.CurrentHand);
 
             var frameTimeDistance = 1000000f / frame.CurrentFramesPerSecond;
             var frameSmoothedImpact = frameTimeDistance / SmoothTime;
@@ -29,13 +30,13 @@ namespace Vyrolan.VMCS
             SmoothedValue = SmoothValue(SmoothedValue, newValue, frameSmoothedImpact);
             CurrentValue = ConvertSmoothToCurrent(SmoothedValue);
 
-            return CurrentValue;
+            return true;
         }
     }
 
     internal class IntegerHandState : NumericalHandState<int>
     {
-        public IntegerHandState(Func<Hand, int> valueGetter, long smoothTime) : base(valueGetter, smoothTime) { }
+        public IntegerHandState(PersistentHand hand, Func<Hand, int> valueGetter, long smoothTime) : base(hand, valueGetter, smoothTime) { }
 
         protected override double SmoothValue(double currentValue, int newValue, double frameSmoothedImpact)
         {
@@ -50,7 +51,7 @@ namespace Vyrolan.VMCS
 
     internal class DecimalHandState : NumericalHandState<double>
     {
-        public DecimalHandState(Func<Hand, double> valueGetter, long smoothTime) : base(valueGetter, smoothTime) { }
+        public DecimalHandState(PersistentHand hand, Func<Hand, double> valueGetter, long smoothTime) : base(hand, valueGetter, smoothTime) { }
 
         protected override double SmoothValue(double currentValue, double newValue, double frameSmoothedImpact)
         {

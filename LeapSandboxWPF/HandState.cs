@@ -9,9 +9,16 @@ namespace Vyrolan.VMCS
         public T NewValue { get; set; }
     }
 
-    internal abstract class HandState<T>
+    internal abstract class HandState<T> : IFrameUpdate
     {
-        public abstract T Update(Hand hand, Frame frame);
+        public PersistentHand Hand { get; private set; }
+
+        protected HandState(PersistentHand hand)
+        {
+            Hand = hand;
+        }
+
+        public abstract bool Update(Frame frame);
 
         private T _CurrentValue;
         public T CurrentValue

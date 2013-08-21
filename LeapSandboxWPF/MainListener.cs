@@ -135,9 +135,7 @@ namespace Vyrolan.VMCS
                 for (var i = 0; i < 2; i++)
                     if (_PotentialHands[i].IsStabilized && _PotentialHands[i].StabilizedHand.PalmPosition.x < 0)
                     {
-                        var ph = _LeftHand;
-                        _LeftHand = _PotentialHands[i];
-                        _PotentialHands[i] = ph;
+                        _LeftHand.PromotePotentialHand(_PotentialHands[i]);
                         break;
                     }
 
@@ -146,9 +144,7 @@ namespace Vyrolan.VMCS
                 for (var i = 0; i < 2; i++)
                     if (_PotentialHands[i].IsStabilized && _PotentialHands[i].StabilizedHand.PalmPosition.x > 0)
                     {
-                        var ph = _RightHand;
-                        _RightHand = _PotentialHands[i];
-                        _PotentialHands[i] = ph;
+                        _RightHand.PromotePotentialHand(_PotentialHands[i]);
                         break;
                     }
 

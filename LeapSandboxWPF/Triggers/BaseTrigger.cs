@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Vyrolan.VMCS.Triggers
 {
@@ -7,9 +9,11 @@ namespace Vyrolan.VMCS.Triggers
         public bool IsTriggered { get; set; }
     }
 
-    internal class BaseTrigger
+    internal abstract class BaseTrigger
     {
         public string Name { get; set; }
+        public PersistentHand Hand { get; set; }
+        public bool RequiresStabilized { get; set; }
 
         private bool _IsTriggered;
         public bool IsTriggered
@@ -17,7 +21,7 @@ namespace Vyrolan.VMCS.Triggers
             get { return _IsTriggered; }
             set
             {
-                if (!_IsTriggered.Equals(value) || value)
+                if (CheckHand() && (!_IsTriggered.Equals(value) || value))
                 {
                     _IsTriggered = value;
                     OnTriggered();
@@ -35,6 +39,25 @@ namespace Vyrolan.VMCS.Triggers
         {
             if (Triggered != null)
                 Triggered(this, new TriggerEventArgs { IsTriggered = IsTriggered });
+        }
+
+        protected virtual IEnumerable<int> GetCandidateHandIds()
+        {
+            return null;
+        }
+        protected bool CheckHand()
+        {
+            // No or Finalized Hand means it can be any Hand
+            if (Hand == null || Hand.IsFinalized)
+                return true;
+
+            // If stabilized required and we're not, not a match
+            if (RequiresStabilized && !Hand.IsStabilized)
+                return false;
+
+            // Check the trigger's list of involved hands if there is one
+            var candidateHandIds = GetCandidateHandIds();
+            return (candidateHandIds == null || candidateHandIds.Contains(Hand.Id));
         }
     }
 }

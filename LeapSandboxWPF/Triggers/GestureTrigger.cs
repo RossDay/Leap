@@ -6,30 +6,18 @@ namespace Vyrolan.VMCS.Triggers
 {
     internal abstract class GestureTrigger : BaseTrigger
     {
-        public Func<PersistentHand> HandGetter { get; set; }
-        public bool RequiresStabilized { get; set; }
-
         protected abstract bool CheckGesture(VyroGesture gesture);
-
-        private bool CheckHand(VyroGesture gesture)
-        {
-            var hand = HandGetter();
-
-            // No or Finalized Hand means it can be any Hand
-            if (hand == null || hand.IsFinalized)
-                return true;
-
-            // If stabilized required and we're not, not a match
-            if (RequiresStabilized && !hand.IsStabilized)
-                return false;
-
-            // If the gesture has our hand in it, it's a match
-            return gesture.HandIds.Contains(hand.Id);
-        }
 
         public bool Check(VyroGesture gesture)
         {
-            return (CheckHand(gesture) && CheckGesture(gesture));
+            _CurrentGesture = gesture;
+            return CheckGesture(gesture);
+        }
+
+        private VyroGesture _CurrentGesture;
+        protected override System.Collections.Generic.IEnumerable<int> GetCandidateHandIds()
+        {
+            return _CurrentGesture.HandIds;
         }
     }
 

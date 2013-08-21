@@ -19,17 +19,17 @@ namespace Vyrolan.VMCS
         public float CurrentFPS { get; set; }
 
         public Hand StabilizedHand { get; private set; }
-        private readonly BooleanHandState _Stabilized = new BooleanHandState(h => h.PalmVelocity.Magnitude < 50, 25000, long.MaxValue);
+        private readonly BooleanHandState _Stabilized;
         public bool IsStabilized { get { return _Stabilized.CurrentValue; } }
 
-        private readonly IntegerHandState _Velocity = new IntegerHandState(h => Convert.ToInt32(h.PalmVelocity.Magnitude), 100000);
-        private readonly IntegerHandState _X = new IntegerHandState(h => Convert.ToInt32(h.PalmPosition.x), 200000);
-        private readonly IntegerHandState _Y = new IntegerHandState(h => Convert.ToInt32(h.PalmPosition.y), 200000);
-        private readonly IntegerHandState _Z = new IntegerHandState(h => Convert.ToInt32(h.PalmPosition.z), 200000);
-        private readonly IntegerHandState _Pitch = new IntegerHandState(h => h.PitchDegrees(), 200000);
-        private readonly IntegerHandState _Roll = new IntegerHandState(h => h.RollDegrees(), 200000);
-        private readonly IntegerHandState _Yaw = new IntegerHandState(h => h.YawDegrees(), 200000);
-        private readonly IntegerHandState _FingerCount = new IntegerHandState(h => h.Fingers.Count, 50000);
+        private readonly IntegerHandState _Velocity;
+        private readonly IntegerHandState _X;
+        private readonly IntegerHandState _Y;
+        private readonly IntegerHandState _Z;
+        private readonly IntegerHandState _Pitch;
+        private readonly IntegerHandState _Roll;
+        private readonly IntegerHandState _Yaw;
+        private readonly IntegerHandState _FingerCount;
 
         public PositionTracker HandTracker { get; private set; }
 
@@ -50,6 +50,32 @@ namespace Vyrolan.VMCS
 
         private ICollection<BaseTrigger> _Triggers;
 
+        public void PromotePotentialHand(PersistentHand potential)
+        {
+            Id = potential.Id;
+            DetectedHand = potential.DetectedHand;
+            FinalHand = potential.FinalHand;
+            CurrentHand = potential.CurrentHand;
+            CurrentFPS = potential.CurrentFPS;
+            StabilizedHand = potential.StabilizedHand;
+
+            _Velocity.CurrentValue = potential.Velocity;
+            _X.CurrentValue = potential.X;
+            _Y.CurrentValue = potential.Y;
+            _Z.CurrentValue = potential.Z;
+            _Pitch.CurrentValue = potential.Pitch;
+            _Roll.CurrentValue = potential.Roll;
+            _Yaw.CurrentValue = potential.Yaw;
+            _FingerCount.CurrentValue = potential.FingerCount;
+
+            potential.FinalHand = potential.CurrentHand;
+            potential.DetectedHand = Hand.Invalid;
+            potential.StabilizedHand = Hand.Invalid;
+            potential.CurrentHand = Hand.Invalid;
+            potential._Stabilized.CurrentValue = false;
+            potential.Id = 0;
+        }
+
         #region Constructor / Initialize
         public PersistentHand()
         {
@@ -59,13 +85,23 @@ namespace Vyrolan.VMCS
             CurrentHand = Hand.Invalid;
             FinalHand = Hand.Invalid;
 
+            _Stabilized = new BooleanHandState(this, h => h.PalmVelocity.Magnitude < 50, 25000, long.MaxValue);
+            _Velocity = new IntegerHandState(this, h => Convert.ToInt32(h.PalmVelocity.Magnitude), 100000);
+            _X = new IntegerHandState(this, h => Convert.ToInt32(h.PalmPosition.x), 200000);
+            _Y = new IntegerHandState(this, h => Convert.ToInt32(h.PalmPosition.y), 200000);
+            _Z = new IntegerHandState(this, h => Convert.ToInt32(h.PalmPosition.z), 200000);
+            _Pitch = new IntegerHandState(this, h => h.PitchDegrees(), 200000);
+            _Roll = new IntegerHandState(this, h => h.RollDegrees(), 200000);
+            _Yaw = new IntegerHandState(this, h => h.YawDegrees(), 200000);
+            _FingerCount = new IntegerHandState(this, h => h.Fingers.Count, 50000);
+
+            HandTracker = new PositionTracker(() => Position);
+
             _Triggers = new List<BaseTrigger>();
             _Triggers.Add(new RangeTrigger(_Roll) { Name = "Roll+", MinValue = 30, MaxValue = 105, Resistance = 5, Stickiness = 10 });
             _Triggers.Add(new RangeTrigger(_Roll) { Name = "Roll-", MinValue = -105, MaxValue = -30, Resistance = 5, Stickiness = 10 });
             _Triggers.Add(new RangeTrigger(_Pitch) { Name = "Pitch+", MinValue = 25, MaxValue = 45, Resistance = 0, Stickiness = 5 });
             _Triggers.Add(new RangeTrigger(_Pitch) { Name = "Pitch-", MinValue = -45, MaxValue = -15, Resistance = 0, Stickiness = 5 });
-
-            HandTracker = new PositionTracker(() => Position);
 
             //var h = new KeyHoldAction(_Triggers.First(t => t.Name.Equals("Roll+")), WindowsInput.Native.VirtualKeyCode.MENU);
             //h = new KeyHoldAction(_Triggers.First(t => t.Name.Equals("Roll-")), WindowsInput.Native.VirtualKeyCode.MENU);
@@ -114,22 +150,22 @@ namespace Vyrolan.VMCS
             if (!IsStabilized)
             {
                 // Check for stabilization complete
-                if (_Stabilized.Update(CurrentHand, frame))
+                if (_Stabilized.Update(frame))
                     StabilizedHand = hand;
                 else
                     return true;
             }
 
-            _Velocity.Update(hand, frame);
-            _X.Update(hand, frame);
-            _Y.Update(hand, frame);
-            _Z.Update(hand, frame);
+            _Velocity.Update(frame);
+            _X.Update(frame);
+            _Y.Update(frame);
+            _Z.Update(frame);
             if (_Velocity.CurrentValue < 200)
             {
-                _Pitch.Update(hand, frame);
-                _Roll.Update(hand, frame);
-                _Yaw.Update(hand, frame);
-                _FingerCount.Update(hand, frame);
+                _Pitch.Update(frame);
+                _Roll.Update(frame);
+                _Yaw.Update(frame);
+                _FingerCount.Update(frame);
             }
             HandTracker.Update(frame);
 
