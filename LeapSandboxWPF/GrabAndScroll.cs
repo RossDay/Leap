@@ -15,7 +15,7 @@ namespace Vyrolan.VMCS
         private readonly Action<string> _LogAction;
         private int _Progress;
 
-        private PersistentHand _ActiveHand = new PersistentHand();
+        private readonly PersistentHand _ActiveHand = new PersistentHand();
         private bool _IsGrabbed;
 
         public void OnFrame(Frame frame)

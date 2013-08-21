@@ -22,16 +22,15 @@ Input Actions:
 	MouseClick
 	MouseDrag
 	Scroll
-	ScrollSensitivityChange
 	MouseMove
 	MouseMoveSensitivityChange
 	ActivateMode
 	DeactivateMode
+	DisableAll
+	EnableAll
 	RestabilizeHand
 	
 Action Scope: 
 	Global < Activated Global Mode < Application < Activated Application Mode
 	Highest priority wins
-
-
 

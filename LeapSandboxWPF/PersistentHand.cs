@@ -50,32 +50,6 @@ namespace Vyrolan.VMCS
 
         private ICollection<BaseTrigger> _Triggers;
 
-        public void PromotePotentialHand(PersistentHand potential)
-        {
-            Id = potential.Id;
-            DetectedHand = potential.DetectedHand;
-            FinalHand = potential.FinalHand;
-            CurrentHand = potential.CurrentHand;
-            CurrentFPS = potential.CurrentFPS;
-            StabilizedHand = potential.StabilizedHand;
-
-            _Velocity.CurrentValue = potential.Velocity;
-            _X.CurrentValue = potential.X;
-            _Y.CurrentValue = potential.Y;
-            _Z.CurrentValue = potential.Z;
-            _Pitch.CurrentValue = potential.Pitch;
-            _Roll.CurrentValue = potential.Roll;
-            _Yaw.CurrentValue = potential.Yaw;
-            _FingerCount.CurrentValue = potential.FingerCount;
-
-            potential.FinalHand = potential.CurrentHand;
-            potential.DetectedHand = Hand.Invalid;
-            potential.StabilizedHand = Hand.Invalid;
-            potential.CurrentHand = Hand.Invalid;
-            potential._Stabilized.CurrentValue = false;
-            potential.Id = 0;
-        }
-
         #region Constructor / Initialize
         public PersistentHand()
         {
@@ -118,6 +92,7 @@ namespace Vyrolan.VMCS
         } 
         #endregion
 
+        #region Update
         public bool Update(Frame frame)
         {
             if (IsFinalized)
@@ -170,7 +145,36 @@ namespace Vyrolan.VMCS
             HandTracker.Update(frame);
 
             return true;
-        }
+        } 
+        #endregion
+
+        #region PromotePotentialHand
+        public void PromotePotentialHand(PersistentHand potential)
+        {
+            Id = potential.Id;
+            DetectedHand = potential.DetectedHand;
+            FinalHand = potential.FinalHand;
+            CurrentHand = potential.CurrentHand;
+            CurrentFPS = potential.CurrentFPS;
+            StabilizedHand = potential.StabilizedHand;
+
+            _Velocity.CurrentValue = potential.Velocity;
+            _X.CurrentValue = potential.X;
+            _Y.CurrentValue = potential.Y;
+            _Z.CurrentValue = potential.Z;
+            _Pitch.CurrentValue = potential.Pitch;
+            _Roll.CurrentValue = potential.Roll;
+            _Yaw.CurrentValue = potential.Yaw;
+            _FingerCount.CurrentValue = potential.FingerCount;
+
+            potential.FinalHand = potential.CurrentHand;
+            potential.DetectedHand = Hand.Invalid;
+            potential.StabilizedHand = Hand.Invalid;
+            potential.CurrentHand = Hand.Invalid;
+            potential._Stabilized.CurrentValue = false;
+            potential.Id = 0;
+        } 
+        #endregion
 
         #region Dump
         public string Dump()

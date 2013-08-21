@@ -12,8 +12,8 @@ namespace Vyrolan.VMCS
         private readonly Action<string> _LogAction;
         private readonly LinkedList<IFrameUpdate> _FrameUpdateItems = new LinkedList<IFrameUpdate>();
         private readonly PersistentHand[] _PotentialHands = new[] { new PersistentHand(), new PersistentHand() };
-        private PersistentHand _LeftHand = new PersistentHand();
-        private PersistentHand _RightHand = new PersistentHand();
+        private readonly PersistentHand _LeftHand = new PersistentHand();
+        private readonly PersistentHand _RightHand = new PersistentHand();
 
         public MainListener(Label log)
         {

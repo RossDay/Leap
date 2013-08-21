@@ -1,6 +1,4 @@
-﻿using System;
-using System.Linq;
-using Vyrolan.VMCS.Gestures;
+﻿using Vyrolan.VMCS.Gestures;
 
 namespace Vyrolan.VMCS.Triggers
 {
