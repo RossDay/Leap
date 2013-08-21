@@ -12,10 +12,10 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <title>Leap Motion JavaScript Sample</title>
-<script src="./leap.js"></script>
+<script src="http://js.leapmotion.com/0.2.0/leap.min.js"></script>
 <script>
 // Store frame for motion functions
-var previousFrame;
+var previousFrame = null;
 var paused = false;
 var pauseOnGesture = false;
 
@@ -38,7 +38,7 @@ Leap.loop(controllerOptions, function(frame) {
                   + "Gestures: " + frame.gestures.length + "<br />";
 
   // Frame motion factors
-  if (previousFrame) {
+  if (previousFrame && previousFrame.valid) {
     var translation = frame.translation(previousFrame);
     frameString += "Translation: " + vectorToString(translation) + " mm <br />";
 
@@ -69,7 +69,7 @@ Leap.loop(controllerOptions, function(frame) {
       handString += "Sphere radius: " + hand.sphereRadius.toFixed(1) + " mm<br />";
 
       // Hand motion factors
-      if (previousFrame) {
+      if (previousFrame && previousFrame.valid) {
         var translation = hand.translation(previousFrame);
         handString += "Translation: " + vectorToString(translation) + " mm<br />";
 
@@ -220,15 +220,9 @@ function pauseForGestures() {
   }
 }
 
-function checkLibrary() {
-  if (typeof Leap === "undefined") {
-    document.getElementById("main").innerHTML = "The Leap Motion JavaScript client library (leap.js file) was not found. Please download the library from the GitHub project at <a href='https://github.com/leapmotion/leapjs'>https://github.com/leapmotion/leapjs</a>."
-    alert("The Leap Motion JavaScript client library (leap.js file) was not found. Please download the latest version from the GitHub project at https://github.com/leapmotion/leapjs");
-  }
-}
 </script>
 </head>
-<body onload="checkLibrary()">
+<body>
 <h1>Leap Motion JavaScript Sample</h1>
 <div id="main">
   <button id="pause" onclick="togglePause()">Pause</button>

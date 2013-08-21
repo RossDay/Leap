@@ -94,14 +94,14 @@ namespace Vyrolan.VMCS
 
             //SafeWriteLine("Frame id: " + frame.Id + ", timestamp: " + frame.Timestamp + ", hands: " + frame.Hands.Count + ", fingers: " + frame.Fingers.Count + ", tools: " + frame.Tools.Count + ", gestures: " + frame.Gestures().Count);
 
-            if (!frame.Hands.Empty)
+            if (!frame.Hands.IsEmpty)
             {
                 // Get the first hand
                 Hand hand = frame.Hands[0];
 
                 // Check if the hand has any fingers
                 FingerList fingers = hand.Fingers;
-                if (!fingers.Empty)
+                if (!fingers.IsEmpty)
                 {
                     // Calculate the hand's average finger tip position
                     Vector avgPos = Vector.Zero;
@@ -166,7 +166,7 @@ namespace Vyrolan.VMCS
                 }
             }
 
-            if (!frame.Hands.Empty || !frame.Gestures().Empty)
+            if (!frame.Hands.IsEmpty || !frame.Gestures().IsEmpty)
             {
                 //SafeWriteLine("");
             }

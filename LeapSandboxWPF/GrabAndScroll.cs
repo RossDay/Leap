@@ -23,7 +23,7 @@ namespace Vyrolan.VMCS
             if (!_ActiveHand.Update(frame))
             {
                 _IsGrabbed = false;
-                if (!frame.Hands.Empty)
+                if (!frame.Hands.IsEmpty)
                     _ActiveHand.Initialize(frame.Hands.Leftmost);
             }
 
