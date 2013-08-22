@@ -12,7 +12,7 @@ namespace Vyrolan.VMCS
 
         public long SmoothTime { get; set; }
         public long StableTime { get; set; }
-        public int StableDistance { get; set; }
+        public int StableDelta { get; set; }
         public int StableVelocity { get; set; }
 
         public IntegerHandState(PersistentHand hand, Func<Hand, int> valueGetter, long smoothTime)
@@ -20,9 +20,9 @@ namespace Vyrolan.VMCS
         {
             _ValueGetter = valueGetter;
             SmoothTime = smoothTime;
-            StableTime = 250000;
-            StableDistance = 25;
-            StableVelocity = 60;
+            StableTime = 0;
+            StableDelta = 0;
+            StableVelocity = 0;
         }
 
         public override bool Update(Frame frame)
@@ -33,7 +33,7 @@ namespace Vyrolan.VMCS
             var frameSmoothedImpact = (SmoothTime < frameTimeDistance ? 1.0 : frameTimeDistance / SmoothTime);
 
             SmoothedValue = SmoothedValue * (1.0 - frameSmoothedImpact) + newValue * frameSmoothedImpact;
-            if ((SmoothedValue - LastValue) >= StableDistance || Hand.Velocity >= StableVelocity)
+            if ((SmoothedValue - LastValue) >= StableDelta || Hand.Velocity >= StableVelocity)
             {
                 CurrentValue = Convert.ToInt32(SmoothedValue);
                 LastValue = CurrentValue;
