@@ -3,6 +3,7 @@ using System.Linq;
 using System.Windows.Controls;
 using Leap;
 using Vyrolan.VMCS.Gestures;
+using Vyrolan.VMCS.Triggers;
 
 namespace Vyrolan.VMCS
 {
@@ -17,6 +18,9 @@ namespace Vyrolan.VMCS
         private readonly HandManager _HandManager;
         private readonly GestureRecognizer _GestureRecognizer;
         private readonly GestureDispatcher _GestureDispatcher;
+
+        private BaseTrigger lt;
+        private BaseTrigger rt;
 
         public ControlSystem(Label log)
         {
@@ -36,20 +40,20 @@ namespace Vyrolan.VMCS
 
             _Controller.AddListener(_Listener);
 
-            var mma = new Actions.MouseMoveAction() { Axis = Actions.PositionTrackingAxis.Screen, MinDistance = 0, Tracker = _HandManager.RightHand.HandTracker };
-            var rt = new Triggers.RangeTrigger(_HandManager.RightHand.FingerCountState) { RequiresStabilized = true, MinValue = 1, MaxValue = 1, Resistance = 0, Stickiness = 1, Name = "1 Finger" };
-            rt.Triggered += new EventHandler<Triggers.TriggerEventArgs>(rt_Triggered);
+            var mma = new Actions.MouseMoveAction { Axis = Actions.PositionTrackingAxis.Screen, MinDistance = 2, Tracker = _HandManager.RightHand.HandTracker };
+            rt = new RangeTrigger(_HandManager.RightHand.FingerCountState) { RequiresStabilized = true, MinValue = 1, MaxValue = 1, Resistance = 0, Stickiness = 1, Name = "1 Finger" };
+            rt.Triggered += rt_Triggered;
             mma.RegisterTrigger(rt);
 
-            var mma2 = new Actions.MouseMoveAction() { Axis = Actions.PositionTrackingAxis.Screen, MinDistance = 2, Tracker = _HandManager.LeftHand.HandTracker };
-            var lt = new Triggers.RangeTrigger(_HandManager.LeftHand.FingerCountState) { RequiresStabilized = true, MinValue = 1, MaxValue = 1, Resistance = 0, Stickiness = 1, Name = "LH1F" };
-            lt.Triggered += new EventHandler<Triggers.TriggerEventArgs>(rt_Triggered);
+            var mma2 = new Actions.MouseMoveAction { Axis = Actions.PositionTrackingAxis.Screen, MinDistance = 2, Tracker = _HandManager.LeftHand.HandTracker };
+            lt = new RangeTrigger(_HandManager.LeftHand.FingerCountState) { RequiresStabilized = true, MinValue = 1, MaxValue = 1, Resistance = 0, Stickiness = 1, Name = "LH1F" };
+            lt.Triggered += rt_Triggered;
             mma2.RegisterTrigger(lt);
         }
 
-        void rt_Triggered(object sender, Triggers.TriggerEventArgs e)
+        void rt_Triggered(object sender, TriggerEventArgs e)
         {
-            _LogAction(((Triggers.BaseTrigger)sender).Name + " = " + e.IsTriggered);
+            _LogAction(((BaseTrigger)sender).Name + " = " + e.IsTriggered);
         }
 
         private long _LastLogTime;
@@ -58,9 +62,10 @@ namespace Vyrolan.VMCS
             var s = _HandManager.Dump();
             if (!String.IsNullOrWhiteSpace(s))
             {
-                if (frame.Timestamp > _LastLogTime + 200000)
+                if (frame.Timestamp > _LastLogTime + 0)
                 {
                     _LastLogTime = frame.Timestamp;
+                    s += String.Format("LT = {0}, RT = {1}", lt.IsTriggered, rt.IsTriggered);
                     _LogAction(s);
                 }
             }

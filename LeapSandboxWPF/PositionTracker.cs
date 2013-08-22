@@ -10,21 +10,23 @@ namespace Vyrolan.VMCS
 
     internal class PositionTracker : IFrameUpdate
     {
-        private Func<Vector> PositionGetter { get; set; }
+        public PersistentHand Hand { get; private set; }
+        private Func<PersistentHand, Vector> PositionGetter { get; set; }
         private readonly object _EnabledLock = new object();
         private int EnabledCount { get; set; }
         public bool IsEnabled { get { return (EnabledCount > 0); } }
 
-        public PositionTracker(Func<Vector> positionGetter)
+        public PositionTracker(PersistentHand hand, Func<PersistentHand, Vector> positionGetter)
         {
+            Hand = hand;
             PositionGetter = positionGetter;
-            CurrentPosition = PositionGetter();
+            _CurrentPosition = PositionGetter(Hand);
         }
 
         public bool Update(Frame frame)
         {
             if (IsEnabled)
-                CurrentPosition = PositionGetter();
+                CurrentPosition = PositionGetter(Hand);
             return true;
         }
 
@@ -33,7 +35,7 @@ namespace Vyrolan.VMCS
             lock (_EnabledLock)
             {
                 if (!IsEnabled)
-                    CurrentPosition = PositionGetter();
+                    _CurrentPosition = PositionGetter(Hand);
                 ++EnabledCount;
             }
         }
@@ -53,6 +55,11 @@ namespace Vyrolan.VMCS
                 _CurrentPosition = value;
                 OnPositionUpdated();
             }
+        }
+
+        public void InitPosition(Vector position)
+        {
+            _CurrentPosition = position;
         }
 
         public event EventHandler<PositionTrackerEventArgs> PositionUpdated;

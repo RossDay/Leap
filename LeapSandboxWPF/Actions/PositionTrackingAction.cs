@@ -88,14 +88,16 @@ namespace Vyrolan.VMCS.Actions
             return temp.y + temp.z;
         }
 
-        protected abstract void ApplyPositionUpdate(Vector change);
+        protected abstract void ApplyPositionUpdate(PersistentHand hand, Vector change);
         private void OnPositionUpdated(object sender, PositionTrackerEventArgs e)
         {
+            if (!IsEnabled) return;
+
             var temp = NormalizeVectorToAxis(e.NewPosition);
             var change = temp - CurrentPosition;
             if (change.Magnitude >= MinDistance)
             {
-                ApplyPositionUpdate(change);
+                ApplyPositionUpdate(_Tracker.Hand, change);
                 if (!IsContinuous)
                     CurrentPosition = temp;
             }

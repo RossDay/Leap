@@ -14,7 +14,7 @@ namespace Vyrolan.VMCS.Actions
         {
             get { return new[] { PositionTrackingAxis.X, PositionTrackingAxis.Y, PositionTrackingAxis.Z }; }
         }
-        protected override void ApplyPositionUpdate(Vector change)
+        protected override void ApplyPositionUpdate(PersistentHand hand, Vector change)
         {
             var linesToScroll = Lines;
             if (IsAccelerated)

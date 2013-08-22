@@ -12,10 +12,10 @@ namespace Vyrolan.VMCS.Actions
         {
             get { return new[] { PositionTrackingAxis.Screen, PositionTrackingAxis.Table }; }
         }
-        protected override void ApplyPositionUpdate(Vector change)
+        protected override void ApplyPositionUpdate(PersistentHand hand, Vector change)
         {
-            var x = Convert.ToInt32(GetX(change)) * _Sensitivity;
-            var y = Convert.ToInt32(GetY(change)) * _Sensitivity;
+            var x = Convert.ToInt32(GetX(change)) * _Sensitivity * (1 + (hand.Velocity - 50) / 100);
+            var y = Convert.ToInt32(GetY(change)) * _Sensitivity * (1 + (hand.Velocity - 50) / 100);
             InputSimulator.Mouse.MoveMouseBy(x, -y);
         }
     }

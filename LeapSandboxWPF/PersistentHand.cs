@@ -66,7 +66,7 @@ namespace Vyrolan.VMCS
             FinalHand = Hand.Invalid;
 
             _Stabilized = new BooleanHandState(this, h => h.PalmVelocity.Magnitude < 50, 25000, long.MaxValue);
-            _Velocity = new IntegerHandState(this, h => Convert.ToInt32(h.PalmVelocity.Magnitude), 100000);
+            _Velocity = new IntegerHandState(this, h => Convert.ToInt32(h.PalmVelocity.Magnitude), 50000);
             _X = new IntegerHandState(this, h => Convert.ToInt32(h.PalmPosition.x), 125000) { IsAccelerated = true };
             _Y = new IntegerHandState(this, h => Convert.ToInt32(h.PalmPosition.y), 125000) { IsAccelerated = true };
             _Z = new IntegerHandState(this, h => Convert.ToInt32(h.PalmPosition.z), 125000) { IsAccelerated = true };
@@ -75,7 +75,7 @@ namespace Vyrolan.VMCS
             _Yaw = new IntegerHandState(this, h => h.YawDegrees(), 250000);
             _FingerCount = new IntegerHandState(this, h => h.Fingers.Count, 250000);
 
-            HandTracker = new PositionTracker(() => Position);
+            HandTracker = new PositionTracker(this, h => h.Position);
         }
 
         public void Initialize(Hand hand)
@@ -123,21 +123,19 @@ namespace Vyrolan.VMCS
                 // Check for stabilization complete
                 if (_Stabilized.Update(frame))
                     StabilizedHand = hand;
-                else
-                    return true;
             }
 
             _Velocity.Update(frame);
             _X.Update(frame);
             _Y.Update(frame);
             _Z.Update(frame);
-            if (_Velocity.CurrentValue < 200)
+            if (_Velocity.CurrentValue < 300)
             {
                 _Pitch.Update(frame);
                 _Roll.Update(frame);
                 _Yaw.Update(frame);
-                _FingerCount.Update(frame);
             }
+            _FingerCount.Update(frame);
             HandTracker.Update(frame);
 
             return true;
@@ -147,21 +145,22 @@ namespace Vyrolan.VMCS
         #region PromotePotentialHand
         public void PromotePotentialHand(PersistentHand potential)
         {
+            _Velocity.InitValue(potential.Velocity);
+            _X.InitValue(potential.X);
+            _Y.InitValue(potential.Y);
+            _Z.InitValue(potential.Z);
+            _Pitch.InitValue(potential.Pitch);
+            _Roll.InitValue(potential.Roll);
+            _Yaw.InitValue(potential.Yaw);
+            _FingerCount.InitValue(potential.FingerCount);
+            HandTracker.InitPosition(potential.HandTracker.CurrentPosition);
+
             Id = potential.Id;
             DetectedHand = potential.DetectedHand;
             FinalHand = potential.FinalHand;
             CurrentHand = potential.CurrentHand;
             CurrentFPS = potential.CurrentFPS;
             StabilizedHand = potential.StabilizedHand;
-
-            _Velocity.CurrentValue = potential.Velocity;
-            _X.CurrentValue = potential.X;
-            _Y.CurrentValue = potential.Y;
-            _Z.CurrentValue = potential.Z;
-            _Pitch.CurrentValue = potential.Pitch;
-            _Roll.CurrentValue = potential.Roll;
-            _Yaw.CurrentValue = potential.Yaw;
-            _FingerCount.CurrentValue = potential.FingerCount;
 
             potential.FinalHand = potential.CurrentHand;
             potential.DetectedHand = Hand.Invalid;
@@ -179,10 +178,10 @@ namespace Vyrolan.VMCS
 
             desc.AppendFormat("Hand: {0}, FPS = {1}", Id, CurrentFPS);
             if (IsStabilized)
-                desc.AppendFormat(", Stabilized, {0} Fingers", _FingerCount.CurrentValue);
+                desc.Append(", Stabilized");
             else
                 desc.Append(", Not Stabilized");
-            desc.AppendFormat(", Velocity = {0}", _Velocity.CurrentValue);
+            desc.AppendFormat(", {0} Fingers, Velocity = {1}", _FingerCount.CurrentValue, _Velocity.CurrentValue);
             desc.AppendLine();
 
             //desc.AppendFormat("Raw Pos.: X = {0:0}, Y = {1:0}, Z = {2:0}", CurrentHand.PalmPosition.x, CurrentHand.PalmPosition.y, CurrentHand.PalmPosition.z);

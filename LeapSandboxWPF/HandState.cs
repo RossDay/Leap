@@ -35,6 +35,11 @@ namespace Vyrolan.VMCS
             }
         }
 
+        public virtual void InitValue(T value)
+        {
+            _CurrentValue = value;
+        }
+
         public event EventHandler<HandStateChangedEventArgs<T>> ValueChanged;
         protected void OnValueChanged(T oldValue, T newValue)
         {
