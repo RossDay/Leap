@@ -3,75 +3,58 @@ using Leap;
 
 namespace Vyrolan.VMCS
 {
-    internal abstract class NumericalHandState<T> : HandState<T>
+    internal class IntegerHandState : HandState<int>
     {
-        private readonly Func<Hand, T> _ValueGetter;
-        public long SmoothTime { get; set; }
-        public bool IsAccelerated { get; set; }
+        private readonly Func<Hand, int> _ValueGetter;
         private double SmoothedValue { get; set; }
+        private double LastValue { get; set; }
+        private long LastTime { get; set; }
 
-        protected NumericalHandState(PersistentHand hand, Func<Hand, T> valueGetter, long smoothTime)
+        public long SmoothTime { get; set; }
+        public long StableTime { get; set; }
+        public int StableDistance { get; set; }
+        public int StableVelocity { get; set; }
+
+        public IntegerHandState(PersistentHand hand, Func<Hand, int> valueGetter, long smoothTime)
             : base(hand)
         {
             _ValueGetter = valueGetter;
             SmoothTime = smoothTime;
-            IsAccelerated = false;
+            StableTime = 250000;
+            StableDistance = 25;
+            StableVelocity = 60;
         }
-
-        protected abstract double SmoothValue(double currentValue, T newValue, double frameSmoothedImpact);
-        protected abstract T ConvertSmoothToCurrent(double smoothed);
 
         public override bool Update(Frame frame)
         {
             var newValue = _ValueGetter(Hand.CurrentHand);
 
             var frameTimeDistance = 1000000f / frame.CurrentFramesPerSecond;
-            var accelerationFactor = (IsAccelerated ? (1.0 + Math.Floor((Hand.Velocity > 50 ? Hand.Velocity - 50 : 0) / 100.0)) : 1.0);
-            var frameSmoothedImpact = frameTimeDistance * accelerationFactor / SmoothTime;
+            var frameSmoothedImpact = (SmoothTime < frameTimeDistance ? 1.0 : frameTimeDistance / SmoothTime);
 
-            //_CurrentValue = _CurrentValue*(1.0 - frameSmoothedImpact) + newValue*frameSmoothedImpact;
-            SmoothedValue = SmoothValue(SmoothedValue, newValue, frameSmoothedImpact);
-            CurrentValue = ConvertSmoothToCurrent(SmoothedValue);
+            SmoothedValue = SmoothedValue * (1.0 - frameSmoothedImpact) + newValue * frameSmoothedImpact;
+            if ((SmoothedValue - LastValue) >= StableDistance || Hand.Velocity >= StableVelocity)
+            {
+                CurrentValue = Convert.ToInt32(SmoothedValue);
+                LastValue = CurrentValue;
+                LastTime = frame.Timestamp;
+            }
+            else if ((frame.Timestamp - LastTime) > StableTime)
+            {
+                LastValue = LastValue * (1.0 - frameSmoothedImpact) + newValue * frameSmoothedImpact;
+                LastTime += Convert.ToInt64(frameSmoothedImpact * StableTime);
+                CurrentValue = Convert.ToInt32(LastValue);
+            }
 
             return true;
         }
 
-        public override void InitValue(T value)
+        public override void InitValue(int value)
         {
             base.InitValue(value);
             SmoothedValue = Convert.ToDouble(value);
+            LastValue = CurrentValue;
+            LastTime = 0;
         }
     }
-
-    internal class IntegerHandState : NumericalHandState<int>
-    {
-        public IntegerHandState(PersistentHand hand, Func<Hand, int> valueGetter, long smoothTime) : base(hand, valueGetter, smoothTime) { }
-
-        protected override double SmoothValue(double currentValue, int newValue, double frameSmoothedImpact)
-        {
-            return currentValue * (1.0 - frameSmoothedImpact) + newValue * frameSmoothedImpact;
-        }
-
-        protected override int ConvertSmoothToCurrent(double smoothed)
-        {
-            return Convert.ToInt32(smoothed);
-        }
-    }
-
-    /*
-    internal class DecimalHandState : NumericalHandState<double>
-    {
-        public DecimalHandState(PersistentHand hand, Func<Hand, double> valueGetter, long smoothTime) : base(hand, valueGetter, smoothTime) { }
-
-        protected override double SmoothValue(double currentValue, double newValue, double frameSmoothedImpact)
-        {
-            return currentValue * (1.0 - frameSmoothedImpact) + newValue * frameSmoothedImpact;
-        }
-
-        protected override double ConvertSmoothToCurrent(double smoothed)
-        {
-            return smoothed;
-        }
-    }
-    */
 }

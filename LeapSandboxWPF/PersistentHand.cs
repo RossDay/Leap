@@ -40,6 +40,7 @@ namespace Vyrolan.VMCS
         public IntegerHandState FingerCountState { get { return _FingerCount; } }
 
         public PositionTracker HandTracker { get; private set; }
+        public PositionTracker FingerTracker { get; private set; }
 
         public int Velocity { get { return _Velocity.CurrentValue; } }
         public int X { get { return _X.CurrentValue; } }
@@ -67,15 +68,19 @@ namespace Vyrolan.VMCS
 
             _Stabilized = new BooleanHandState(this, h => h.PalmVelocity.Magnitude < 50, 25000, long.MaxValue);
             _Velocity = new IntegerHandState(this, h => Convert.ToInt32(h.PalmVelocity.Magnitude), 50000);
-            _X = new IntegerHandState(this, h => Convert.ToInt32(h.PalmPosition.x), 125000) { IsAccelerated = true };
-            _Y = new IntegerHandState(this, h => Convert.ToInt32(h.PalmPosition.y), 125000) { IsAccelerated = true };
-            _Z = new IntegerHandState(this, h => Convert.ToInt32(h.PalmPosition.z), 125000) { IsAccelerated = true };
+            _X = new IntegerHandState(this, h => Convert.ToInt32(h.PalmPosition.x), 125000);
+            _Y = new IntegerHandState(this, h => Convert.ToInt32(h.PalmPosition.y), 125000);
+            _Z = new IntegerHandState(this, h => Convert.ToInt32(h.PalmPosition.z), 125000);
             _Pitch = new IntegerHandState(this, h => h.PitchDegrees(), 250000);
             _Roll = new IntegerHandState(this, h => h.RollDegrees(), 250000);
             _Yaw = new IntegerHandState(this, h => h.YawDegrees(), 250000);
-            _FingerCount = new IntegerHandState(this, h => h.Fingers.Count, 250000);
+            _FingerCount = new IntegerHandState(this, h => h.Fingers.Count, 0) { StableDistance = 5, StableTime = 50000, StableVelocity = int.MaxValue };
 
-            HandTracker = new PositionTracker(this, h => h.Position);
+            HandTracker = new PositionTracker(this, h => h.Position, h => h.Velocity);
+            FingerTracker = new PositionTracker(this
+                                                , h => h.CurrentHand.Fingers.Leftmost.StabilizedTipPosition
+                                                , h => Convert.ToInt32(h.CurrentHand.Fingers.Leftmost.TipVelocity.Magnitude)
+                                               );
         }
 
         public void Initialize(Hand hand)
@@ -137,6 +142,7 @@ namespace Vyrolan.VMCS
             }
             _FingerCount.Update(frame);
             HandTracker.Update(frame);
+            FingerTracker.Update(frame);
 
             return true;
         } 
@@ -154,6 +160,7 @@ namespace Vyrolan.VMCS
             _Yaw.InitValue(potential.Yaw);
             _FingerCount.InitValue(potential.FingerCount);
             HandTracker.InitPosition(potential.HandTracker.CurrentPosition);
+            FingerTracker.InitPosition(potential.FingerTracker.CurrentPosition);
 
             Id = potential.Id;
             DetectedHand = potential.DetectedHand;

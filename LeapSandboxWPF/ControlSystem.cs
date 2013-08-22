@@ -40,12 +40,12 @@ namespace Vyrolan.VMCS
 
             _Controller.AddListener(_Listener);
 
-            var mma = new Actions.MouseMoveAction { Axis = Actions.PositionTrackingAxis.Screen, MinDistance = 2, Tracker = _HandManager.RightHand.HandTracker };
+            var mma = new Actions.MouseMoveAction { Axis = Actions.PositionTrackingAxis.Screen, MinDistance = 0, Tracker = _HandManager.RightHand.FingerTracker };
             rt = new RangeTrigger(_HandManager.RightHand.FingerCountState) { RequiresStabilized = true, MinValue = 1, MaxValue = 1, Resistance = 0, Stickiness = 1, Name = "1 Finger" };
             rt.Triggered += rt_Triggered;
             mma.RegisterTrigger(rt);
 
-            var mma2 = new Actions.MouseMoveAction { Axis = Actions.PositionTrackingAxis.Screen, MinDistance = 2, Tracker = _HandManager.LeftHand.HandTracker };
+            var mma2 = new Actions.MouseMoveAction { Axis = Actions.PositionTrackingAxis.Screen, MinDistance = 0, Tracker = _HandManager.LeftHand.FingerTracker };
             lt = new RangeTrigger(_HandManager.LeftHand.FingerCountState) { RequiresStabilized = true, MinValue = 1, MaxValue = 1, Resistance = 0, Stickiness = 1, Name = "LH1F" };
             lt.Triggered += rt_Triggered;
             mma2.RegisterTrigger(lt);
