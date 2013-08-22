@@ -129,7 +129,7 @@
     <Compile Include="Triggers\RangeTrigger.cs" />
     <Compile Include="SandboxListener.cs" />
     <Compile Include="BooleanHandState.cs" />
-    <Compile Include="NumericalHandState.cs" />
+    <Compile Include="IntegerHandState.cs" />
     <Compile Include="Gestures\VyroGesture.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
