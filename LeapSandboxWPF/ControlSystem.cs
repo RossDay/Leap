@@ -35,14 +35,35 @@ namespace Vyrolan.VMCS
             _Listener.RegisterForFrameUpdates(this);
 
             _Controller.AddListener(_Listener);
+
+            var mma = new Actions.MouseMoveAction() { Axis = Actions.PositionTrackingAxis.Screen, MinDistance = 0, Tracker = _HandManager.RightHand.HandTracker };
+            var rt = new Triggers.RangeTrigger(_HandManager.RightHand.FingerCountState) { RequiresStabilized = true, MinValue = 1, MaxValue = 1, Resistance = 0, Stickiness = 1, Name = "1 Finger" };
+            rt.Triggered += new EventHandler<Triggers.TriggerEventArgs>(rt_Triggered);
+            mma.RegisterTrigger(rt);
+
+            var mma2 = new Actions.MouseMoveAction() { Axis = Actions.PositionTrackingAxis.Screen, MinDistance = 2, Tracker = _HandManager.LeftHand.HandTracker };
+            var lt = new Triggers.RangeTrigger(_HandManager.LeftHand.FingerCountState) { RequiresStabilized = true, MinValue = 1, MaxValue = 1, Resistance = 0, Stickiness = 1, Name = "LH1F" };
+            lt.Triggered += new EventHandler<Triggers.TriggerEventArgs>(rt_Triggered);
+            mma2.RegisterTrigger(lt);
         }
 
+        void rt_Triggered(object sender, Triggers.TriggerEventArgs e)
+        {
+            _LogAction(((Triggers.BaseTrigger)sender).Name + " = " + e.IsTriggered);
+        }
+
+        private long _LastLogTime;
         public bool Update(Leap.Frame frame)
         {
             var s = _HandManager.Dump();
             if (!String.IsNullOrWhiteSpace(s))
-                _LogAction(s);
-
+            {
+                if (frame.Timestamp > _LastLogTime + 200000)
+                {
+                    _LastLogTime = frame.Timestamp;
+                    _LogAction(s);
+                }
+            }
             return true;
         }
 
@@ -66,7 +87,7 @@ namespace Vyrolan.VMCS
             {
                 _Log.Dispatcher.Invoke(new Action(delegate
                 {
-                    _Log.Content = "Exception: " + e.GetType().FullName + "\n" + e.Message;
+                    _Log.Content = "Exception: " + e.GetType().FullName + "\n" + e.Message + "\n" + e.StackTrace;
                 }));
             }
         } 

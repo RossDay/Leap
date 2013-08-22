@@ -30,6 +30,15 @@ namespace Vyrolan.VMCS
         private readonly IntegerHandState _Yaw;
         private readonly IntegerHandState _FingerCount;
 
+        public IntegerHandState VelocityState { get { return _Velocity; } }
+        public IntegerHandState XState { get { return _X; } }
+        public IntegerHandState YState { get { return _Y; } }
+        public IntegerHandState ZState { get { return _Z; } }
+        public IntegerHandState PitchState { get { return _Pitch; } }
+        public IntegerHandState RollState { get { return _Roll; } }
+        public IntegerHandState YawState { get { return _Yaw; } }
+        public IntegerHandState FingerCountState { get { return _FingerCount; } }
+
         public PositionTracker HandTracker { get; private set; }
 
         public int Velocity { get { return _Velocity.CurrentValue; } }
@@ -58,13 +67,13 @@ namespace Vyrolan.VMCS
 
             _Stabilized = new BooleanHandState(this, h => h.PalmVelocity.Magnitude < 50, 25000, long.MaxValue);
             _Velocity = new IntegerHandState(this, h => Convert.ToInt32(h.PalmVelocity.Magnitude), 100000);
-            _X = new IntegerHandState(this, h => Convert.ToInt32(h.PalmPosition.x), 200000);
-            _Y = new IntegerHandState(this, h => Convert.ToInt32(h.PalmPosition.y), 200000);
-            _Z = new IntegerHandState(this, h => Convert.ToInt32(h.PalmPosition.z), 200000);
-            _Pitch = new IntegerHandState(this, h => h.PitchDegrees(), 200000);
-            _Roll = new IntegerHandState(this, h => h.RollDegrees(), 200000);
-            _Yaw = new IntegerHandState(this, h => h.YawDegrees(), 200000);
-            _FingerCount = new IntegerHandState(this, h => h.Fingers.Count, 50000);
+            _X = new IntegerHandState(this, h => Convert.ToInt32(h.PalmPosition.x), 125000) { IsAccelerated = true };
+            _Y = new IntegerHandState(this, h => Convert.ToInt32(h.PalmPosition.y), 125000) { IsAccelerated = true };
+            _Z = new IntegerHandState(this, h => Convert.ToInt32(h.PalmPosition.z), 125000) { IsAccelerated = true };
+            _Pitch = new IntegerHandState(this, h => h.PitchDegrees(), 250000);
+            _Roll = new IntegerHandState(this, h => h.RollDegrees(), 250000);
+            _Yaw = new IntegerHandState(this, h => h.YawDegrees(), 250000);
+            _FingerCount = new IntegerHandState(this, h => h.Fingers.Count, 250000);
 
             HandTracker = new PositionTracker(() => Position);
         }
@@ -176,6 +185,8 @@ namespace Vyrolan.VMCS
             desc.AppendFormat(", Velocity = {0}", _Velocity.CurrentValue);
             desc.AppendLine();
 
+            //desc.AppendFormat("Raw Pos.: X = {0:0}, Y = {1:0}, Z = {2:0}", CurrentHand.PalmPosition.x, CurrentHand.PalmPosition.y, CurrentHand.PalmPosition.z);
+            //desc.AppendLine();
             desc.AppendFormat("Position: X = {0}, Y = {1}, Z = {2}", _X.CurrentValue, _Y.CurrentValue, _Z.CurrentValue);
             desc.AppendLine();
 

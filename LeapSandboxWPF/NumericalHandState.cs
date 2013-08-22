@@ -7,6 +7,7 @@ namespace Vyrolan.VMCS
     {
         private readonly Func<Hand, T> _ValueGetter;
         public long SmoothTime { get; set; }
+        public bool IsAccelerated { get; set; }
         private double SmoothedValue { get; set; }
 
         protected NumericalHandState(PersistentHand hand, Func<Hand, T> valueGetter, long smoothTime)
@@ -14,6 +15,7 @@ namespace Vyrolan.VMCS
         {
             _ValueGetter = valueGetter;
             SmoothTime = smoothTime;
+            IsAccelerated = false;
         }
 
         protected abstract double SmoothValue(double currentValue, T newValue, double frameSmoothedImpact);
@@ -24,7 +26,8 @@ namespace Vyrolan.VMCS
             var newValue = _ValueGetter(Hand.CurrentHand);
 
             var frameTimeDistance = 1000000f / frame.CurrentFramesPerSecond;
-            var frameSmoothedImpact = frameTimeDistance / SmoothTime;
+            var accelerationFactor = (IsAccelerated ? (1.0 + Math.Floor((Hand.Velocity > 50 ? Hand.Velocity - 50 : 0) / 50.0)) : 1.0);
+            var frameSmoothedImpact = frameTimeDistance * accelerationFactor / SmoothTime;
 
             //_CurrentValue = _CurrentValue*(1.0 - frameSmoothedImpact) + newValue*frameSmoothedImpact;
             SmoothedValue = SmoothValue(SmoothedValue, newValue, frameSmoothedImpact);

@@ -63,13 +63,13 @@ namespace Vyrolan.VMCS
         {
             var s = "";
             if (_LeftHand.IsStabilized)
-                s += "\nLeft Hand:\n------------------------------------------------------------------------\n" + _LeftHand.Dump();
+                s += "Left Hand:\n------------------------------------------------------------------------\n" + _LeftHand.Dump() + "\n";
             if (_RightHand.IsStabilized)
-                s += "\nRight Hand:\n------------------------------------------------------------------------\n" + _RightHand.Dump();
+                s += "Right Hand:\n------------------------------------------------------------------------\n" + _RightHand.Dump() + "\n";
             if (!_PotentialHands[0].IsFinalized)
-                s += "\nPotential Hand 0:\n------------------------------------------------------------------------\n" + _PotentialHands[0].Dump();
+                s += "Potential Hand 0:\n------------------------------------------------------------------------\n" + _PotentialHands[0].Dump() + "\n";
             if (!_PotentialHands[1].IsFinalized)
-                s += "\nPotential Hand 1:\n------------------------------------------------------------------------\n" + _PotentialHands[1].Dump();
+                s += "Potential Hand 1:\n------------------------------------------------------------------------\n" + _PotentialHands[1].Dump() + "\n";
             return s;
         }
     }

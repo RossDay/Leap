@@ -77,7 +77,7 @@ namespace Vyrolan.VMCS
             }
             catch (Exception e)
             {
-                _LogAction("Exception: " + e.GetType().FullName + "\n" + e.Message);
+                _LogAction("Exception: " + e.GetType().FullName + "\n" + e.Message + "\n" + e.StackTrace);
             }
         }
     }

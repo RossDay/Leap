@@ -31,7 +31,7 @@ namespace Vyrolan.VMCS.Actions
         protected Vector CurrentPosition { get; set; }
         protected bool IsEnabled { get; private set; }
         private PositionTracker _Tracker;
-        protected PositionTracker Tracker 
+        public PositionTracker Tracker 
         {
             get { return _Tracker; }
             set

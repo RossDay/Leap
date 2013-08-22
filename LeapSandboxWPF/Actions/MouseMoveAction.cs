@@ -6,7 +6,7 @@ namespace Vyrolan.VMCS.Actions
 {
     internal class MouseMoveAction : PositionTrackingAction
     {
-        private static readonly int _Sensitivity = 10;
+        private static readonly int _Sensitivity = 3;
 
         protected override IEnumerable<PositionTrackingAxis> ValidAxes
         {
@@ -16,7 +16,7 @@ namespace Vyrolan.VMCS.Actions
         {
             var x = Convert.ToInt32(GetX(change)) * _Sensitivity;
             var y = Convert.ToInt32(GetY(change)) * _Sensitivity;
-            InputSimulator.Mouse.MoveMouseBy(x, y);
+            InputSimulator.Mouse.MoveMouseBy(x, -y);
         }
     }
 }
