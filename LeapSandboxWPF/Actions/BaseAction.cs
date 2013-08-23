@@ -9,7 +9,7 @@ namespace Vyrolan.VMCS.Actions
     internal abstract class BaseAction
     {
         protected static InputSimulator InputSimulator = new InputSimulator();
-        private readonly object _Lock = new object();
+        protected readonly object _Lock = new object();
         private ICollection<BaseTrigger> _Triggers = new List<BaseTrigger>();
         public bool IsFiring { get; protected set; }
 
@@ -65,5 +65,21 @@ namespace Vyrolan.VMCS.Actions
 
         protected abstract void Begin();
         protected abstract void End();
+    }
+
+    internal abstract class DiscreteAction : BaseAction
+    {
+        protected abstract void Fire();
+
+        protected override void Begin()
+        {
+            Fire();
+            lock (_Lock)
+                IsFiring = false;
+        }
+
+        protected override void End()
+        {
+        }
     }
 }

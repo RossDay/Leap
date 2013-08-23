@@ -4,7 +4,7 @@ using WindowsInput.Native;
 
 namespace Vyrolan.VMCS.Actions
 {
-    internal class KeyPressAction : BaseAction
+    internal class KeyPressAction : DiscreteAction
     {
         private readonly ICollection<VirtualKeyCode> _Modifiers = new List<VirtualKeyCode>(4);
         private VirtualKeyCode _Key;
@@ -32,14 +32,10 @@ namespace Vyrolan.VMCS.Actions
             return _Modifiers.Remove(modifier);
         }
 
-        protected override void Begin()
+        protected override void Fire()
         {
             if (KeySet)
                 InputSimulator.Keyboard.ModifiedKeyStroke(_Modifiers, Key);
-        }
-
-        protected override void End()
-        {
         }
     }
 
@@ -71,7 +67,7 @@ namespace Vyrolan.VMCS.Actions
         }
     }
 
-    internal class KeyMacroAction : BaseAction
+    internal class KeyMacroAction : DiscreteAction
     {
         public ICollection<VirtualKeyCode> _Keys = new List<VirtualKeyCode>();
 
@@ -84,7 +80,7 @@ namespace Vyrolan.VMCS.Actions
             _Keys.Clear();
         }
 
-        protected override void Begin()
+        protected override void Fire()
         {
             var activeModifiers = new List<VirtualKeyCode>();
 
@@ -100,11 +96,5 @@ namespace Vyrolan.VMCS.Actions
                 }
             }
         }
-
-        protected override void End()
-        {
-        }
     }
-
-
-}
+ }

@@ -20,9 +20,6 @@ namespace Vyrolan.VMCS
         private readonly GestureRecognizer _GestureRecognizer;
         private readonly GestureDispatcher _GestureDispatcher;
 
-        private BaseTrigger lt;
-        private BaseTrigger rt;
-
         public ControlSystem(Label log)
         {
             _Log = log;
@@ -42,12 +39,17 @@ namespace Vyrolan.VMCS
 
             _Controller.AddListener(_Listener);
 
-            var mma = new Actions.MouseMoveAction { Axis = Actions.PositionTrackingAxis.Screen, MinDistance = 0, Tracker = _HandManager.RightHand.FingerTracker };
-            rt = new RangeTrigger(_HandManager.RightHand.FingerCountState) { RequiresStabilized = true, MinValue = 1, MaxValue = 1, Resistance = 0, Stickiness = 1, Name = "1 Finger" };
-            mma.RegisterTrigger(rt);
+            //var mma = new Actions.MouseMoveAction { Axis = Actions.PositionTrackingAxis.Screen, MinDistance = 0, Tracker = _HandManager.RightHand.FingerTracker };
+            //var rt = new RangeTrigger(_HandManager.RightHand.FingerCountState) { RequiresStabilized = true, MinValue = 1, MaxValue = 1, Resistance = 0, Stickiness = 1, Name = "1 Finger" };
+            //mma.RegisterTrigger(rt);
+
+            var sa = new Actions.MouseClickAction { Button = WindowsInput.Native.VirtualKeyCode.RBUTTON, IsDoubleClick = false };
+            var rt = new Triggers.GestureTriggerCircle { Hand = _HandManager.RightHand, IsClockwise = true, MinRadius = 0, MaxRadius = 1000, RequiresStabilized = true, Name = "circle!" };
+            sa.RegisterTrigger(rt);
+            _GestureDispatcher.RegisterTrigger(rt);
 
             var mma2 = new Actions.ScrollAction { Axis = Actions.PositionTrackingAxis.Y, Tracker = _HandManager.LeftHand.HandTracker, IsAccelerated = true, Lines = 1, IsContinuous = true, MinDistance = 25 };
-            lt = new RangeTrigger(_HandManager.LeftHand.FingerCountState) { RequiresStabilized = true, MinValue = 1, MaxValue = 1, Resistance = 0, Stickiness = 1, Name = "LH1F" };
+            var lt = new RangeTrigger(_HandManager.LeftHand.FingerCountState) { RequiresStabilized = true, MinValue = 1, MaxValue = 1, Resistance = 0, Stickiness = 1, Name = "LH1F" };
             mma2.RegisterTrigger(lt);
         }
 

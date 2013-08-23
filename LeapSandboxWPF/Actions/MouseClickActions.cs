@@ -3,7 +3,7 @@ using WindowsInput.Native;
 
 namespace Vyrolan.VMCS.Actions
 {
-    class MouseClickAction : BaseAction
+    class MouseClickAction : DiscreteAction
     {
         public bool IsDoubleClick { get; set; }
 
@@ -20,7 +20,7 @@ namespace Vyrolan.VMCS.Actions
             }
         }
 
-        protected override void Begin()
+        protected override void Fire()
         {
             switch (Button)
             {
@@ -37,10 +37,6 @@ namespace Vyrolan.VMCS.Actions
                         InputSimulator.Mouse.RightButtonClick();
                     break;
             }
-        }
-
-        protected override void End()
-        {
         }
     }
 
