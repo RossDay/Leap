@@ -46,7 +46,7 @@ namespace Vyrolan.VMCS.Actions
         protected override void Begin()
         {
             Tracker.Enable();
-            CurrentPosition = Tracker.CurrentPosition;
+            CurrentPosition = NormalizeVectorToAxis(Tracker.CurrentPosition);
             IsEnabled = true;
         }
 

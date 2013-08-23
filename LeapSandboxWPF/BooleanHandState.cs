@@ -34,6 +34,8 @@ namespace Vyrolan.VMCS
 
         public override bool Update(Frame frame)
         {
+            base.Update(frame);
+
             var current = (CurrentValue ? _ExitPredicate(Hand.CurrentHand) : _EnterPredicate(Hand.CurrentHand));
             var time = frame.Timestamp;
 

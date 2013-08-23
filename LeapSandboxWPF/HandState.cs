@@ -7,6 +7,7 @@ namespace Vyrolan.VMCS
     {
         public T OldValue { get; set; }
         public T NewValue { get; set; }
+        public long CurrentTime { get; set; }
     }
 
     internal abstract class HandState<T> : IFrameUpdate
@@ -18,8 +19,13 @@ namespace Vyrolan.VMCS
             Hand = hand;
         }
 
-        public abstract bool Update(Frame frame);
+        public virtual bool Update(Frame frame)
+        {
+            _CurrentTime = frame.Timestamp;
+            return true;
+        }
 
+        private long _CurrentTime;
         private T _CurrentValue;
         public T CurrentValue
         {
@@ -44,7 +50,7 @@ namespace Vyrolan.VMCS
         protected void OnValueChanged(T oldValue, T newValue)
         {
             if (ValueChanged != null)
-                ValueChanged(this, new HandStateChangedEventArgs<T> { OldValue = oldValue, NewValue = newValue });
+                ValueChanged(this, new HandStateChangedEventArgs<T> { OldValue = oldValue, NewValue = newValue, CurrentTime = _CurrentTime });
         }
     }
 }

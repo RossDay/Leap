@@ -11,6 +11,7 @@ namespace Vyrolan.VMCS
     {
         private readonly Label _Log;
         private readonly Action<string> _LogAction;
+        public static Action<string> StaticLog;
         private readonly Object _Lock = new Object();
 
         private readonly Controller _Controller;
@@ -26,6 +27,7 @@ namespace Vyrolan.VMCS
         {
             _Log = log;
             _LogAction = SafeWriteLine;
+            StaticLog = this._LogAction;
             _LogAction("Control System Constructed");
 
             _Controller = new Controller();
@@ -42,18 +44,11 @@ namespace Vyrolan.VMCS
 
             var mma = new Actions.MouseMoveAction { Axis = Actions.PositionTrackingAxis.Screen, MinDistance = 0, Tracker = _HandManager.RightHand.FingerTracker };
             rt = new RangeTrigger(_HandManager.RightHand.FingerCountState) { RequiresStabilized = true, MinValue = 1, MaxValue = 1, Resistance = 0, Stickiness = 1, Name = "1 Finger" };
-            rt.Triggered += rt_Triggered;
             mma.RegisterTrigger(rt);
 
-            var mma2 = new Actions.MouseMoveAction { Axis = Actions.PositionTrackingAxis.Screen, MinDistance = 0, Tracker = _HandManager.LeftHand.FingerTracker };
+            var mma2 = new Actions.ScrollAction { Axis = Actions.PositionTrackingAxis.Y, Tracker = _HandManager.LeftHand.HandTracker, IsAccelerated = true, Lines = 1, IsContinuous = true, MinDistance = 25 };
             lt = new RangeTrigger(_HandManager.LeftHand.FingerCountState) { RequiresStabilized = true, MinValue = 1, MaxValue = 1, Resistance = 0, Stickiness = 1, Name = "LH1F" };
-            lt.Triggered += rt_Triggered;
             mma2.RegisterTrigger(lt);
-        }
-
-        void rt_Triggered(object sender, TriggerEventArgs e)
-        {
-            _LogAction(((BaseTrigger)sender).Name + " = " + e.IsTriggered);
         }
 
         private long _LastLogTime;
@@ -65,7 +60,6 @@ namespace Vyrolan.VMCS
                 if (frame.Timestamp > _LastLogTime + 0)
                 {
                     _LastLogTime = frame.Timestamp;
-                    s += String.Format("LT = {0}, RT = {1}", lt.IsTriggered, rt.IsTriggered);
                     _LogAction(s);
                 }
             }

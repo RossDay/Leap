@@ -27,6 +27,8 @@ namespace Vyrolan.VMCS
 
         public override bool Update(Frame frame)
         {
+            base.Update(frame);
+
             var newValue = _ValueGetter(Hand.CurrentHand);
 
             var frameTimeDistance = 1000000f / frame.CurrentFramesPerSecond;

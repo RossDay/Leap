@@ -71,9 +71,9 @@ namespace Vyrolan.VMCS
             _X = new IntegerHandState(this, h => Convert.ToInt32(h.PalmPosition.x), 125000) { StableTime = 250000, StableDelta = 25, StableVelocity = 60 };
             _Y = new IntegerHandState(this, h => Convert.ToInt32(h.PalmPosition.y), 125000) { StableTime = 250000, StableDelta = 25, StableVelocity = 60 };
             _Z = new IntegerHandState(this, h => Convert.ToInt32(h.PalmPosition.z), 125000) { StableTime = 250000, StableDelta = 25, StableVelocity = 60 };
-            _Pitch = new IntegerHandState(this, h => h.PitchDegrees(), 250000) { StableTime = 500000, StableDelta = 5, StableVelocity = int.MaxValue };
-            _Roll = new IntegerHandState(this, h => h.RollDegrees(), 250000) { StableTime = 500000, StableDelta = 5, StableVelocity = int.MaxValue };
-            _Yaw = new IntegerHandState(this, h => h.YawDegrees(), 250000) { StableTime = 500000, StableDelta = 5, StableVelocity = int.MaxValue };
+            _Pitch = new IntegerHandState(this, h => h.PitchDegrees(), 125000) { StableTime = 250000, StableDelta = 5, StableVelocity = int.MaxValue };
+            _Roll = new IntegerHandState(this, h => h.RollDegrees(), 125000) { StableTime = 250000, StableDelta = 5, StableVelocity = int.MaxValue };
+            _Yaw = new IntegerHandState(this, h => h.YawDegrees(), 125000) { StableTime = 250000, StableDelta = 5, StableVelocity = int.MaxValue };
             _FingerCount = new IntegerHandState(this, h => h.Fingers.Count, 0) { StableDelta = 5, StableTime = 50000, StableVelocity = int.MaxValue };
 
             HandTracker = new PositionTracker(this, h => h.Position, h => h.Velocity);
