@@ -97,10 +97,8 @@ namespace Vyrolan.VMCS.Actions
         {
             var activeModifiers = new List<VirtualKeyCode>();
 
-            ControlSystem.StaticLog("Key Macro Firing:");
             foreach (var key in _Keys)
             {
-                ControlSystem.StaticLog(" * " + key);
                 if (IsModifier(key))
                     activeModifiers.Add(key);
                 else
