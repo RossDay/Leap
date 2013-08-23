@@ -21,7 +21,7 @@ namespace Vyrolan.VMCS.Triggers
             get { return _IsTriggered; }
             set
             {
-                if (CheckHand() && (!_IsTriggered.Equals(value) || value))
+                if (CheckHand(null) && (!_IsTriggered.Equals(value) || value))
                 {
                     _IsTriggered = value;
                     OnTriggered();
@@ -41,11 +41,7 @@ namespace Vyrolan.VMCS.Triggers
                 Triggered(this, new TriggerEventArgs { IsTriggered = IsTriggered });
         }
 
-        protected virtual IEnumerable<int> GetCandidateHandIds()
-        {
-            return null;
-        }
-        protected bool CheckHand()
+        protected bool CheckHand(IEnumerable<int> candidateHandIds)
         {
             // No or Finalized Hand means it can be any Hand
             if (Hand == null || Hand.IsFinalized)
@@ -56,7 +52,6 @@ namespace Vyrolan.VMCS.Triggers
                 return false;
 
             // Check the trigger's list of involved hands if there is one
-            var candidateHandIds = GetCandidateHandIds();
             return (candidateHandIds == null || candidateHandIds.Contains(Hand.Id));
         }
     }

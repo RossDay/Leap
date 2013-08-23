@@ -13,6 +13,7 @@ namespace Vyrolan.VMCS.Triggers
 
         public RangeTrigger(HandState<int> state)
         {
+            Hand = state.Hand;
             state.ValueChanged += OnStateValueChanged;
             ResistanceTime = 1000000;
             StickinessTime = 1000000;

@@ -1,4 +1,6 @@
-﻿using Vyrolan.VMCS.Gestures;
+﻿using System.Collections.Generic;
+using System.Linq;
+using Vyrolan.VMCS.Gestures;
 
 namespace Vyrolan.VMCS.Triggers
 {
@@ -8,14 +10,7 @@ namespace Vyrolan.VMCS.Triggers
 
         public bool Check(VyroGesture gesture)
         {
-            _CurrentGesture = gesture;
-            return CheckGesture(gesture);
-        }
-
-        private VyroGesture _CurrentGesture;
-        protected override System.Collections.Generic.IEnumerable<int> GetCandidateHandIds()
-        {
-            return _CurrentGesture.HandIds;
+            return (CheckHand(gesture.HandIds) && CheckGesture(gesture));
         }
     }
 

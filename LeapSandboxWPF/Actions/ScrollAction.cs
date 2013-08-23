@@ -26,4 +26,16 @@ namespace Vyrolan.VMCS.Actions
                 Native.ScrollActiveWindow(isUp);
         }
     }
+
+    class DiscreteScrollAction : DiscreteAction
+    {
+        public int Lines { get; set; }
+        public bool IsUp { get; set; }
+
+        protected override void Fire()
+        {
+            for (var i = 0; i < Lines; i++)
+                Native.ScrollActiveWindow(IsUp);
+        }
+    }
 }

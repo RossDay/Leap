@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using WindowsInput.Native;
 
@@ -69,12 +70,24 @@ namespace Vyrolan.VMCS.Actions
 
     internal class KeyMacroAction : DiscreteAction
     {
-        public ICollection<VirtualKeyCode> _Keys = new List<VirtualKeyCode>();
+        private ICollection<VirtualKeyCode> _Keys = new List<VirtualKeyCode>();
 
         public void AddKey(VirtualKeyCode key)
         {
             _Keys.Add(key);
         }
+
+        public void AddKeys(IEnumerable<VirtualKeyCode> keys)
+        {
+            foreach (var k in keys)
+                AddKey(k);
+        }
+
+        public void AddKeys(params VirtualKeyCode[] keys)
+        {
+            AddKeys((IEnumerable<VirtualKeyCode>)keys);
+        }
+
         public void ClearKeys()
         {
             _Keys.Clear();
@@ -84,15 +97,17 @@ namespace Vyrolan.VMCS.Actions
         {
             var activeModifiers = new List<VirtualKeyCode>();
 
+            ControlSystem.StaticLog("Key Macro Firing:");
             foreach (var key in _Keys)
             {
+                ControlSystem.StaticLog(" * " + key);
                 if (IsModifier(key))
                     activeModifiers.Add(key);
                 else
                 {
                     InputSimulator.Keyboard.ModifiedKeyStroke(activeModifiers, key);
                     activeModifiers.Clear();
-                    InputSimulator.Keyboard.Sleep(50);
+                    InputSimulator.Keyboard.Sleep(5);
                 }
             }
         }

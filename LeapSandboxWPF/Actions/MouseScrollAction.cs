@@ -22,4 +22,15 @@ namespace Vyrolan.VMCS.Actions
             InputSimulator.Mouse.VerticalScroll(linesToScroll);
         }
     }
+
+    class DiscreteMouseScrollAction : DiscreteAction
+    {
+        public int Lines { get; set; }
+        public bool IsUp { get; set; }
+
+        protected override void Fire()
+        {
+            InputSimulator.Mouse.VerticalScroll(Lines * (IsUp ? 1 : -1));
+        }
+    }
 }

@@ -2,8 +2,10 @@
 using System.Linq;
 using System.Windows.Controls;
 using Leap;
+using Vyrolan.VMCS.Actions;
 using Vyrolan.VMCS.Gestures;
 using Vyrolan.VMCS.Triggers;
+using WindowsInput.Native;
 
 namespace Vyrolan.VMCS
 {
@@ -24,7 +26,7 @@ namespace Vyrolan.VMCS
         {
             _Log = log;
             _LogAction = SafeWriteLine;
-            StaticLog = this._LogAction;
+            StaticLog = _LogAction;
             _LogAction("Control System Constructed");
 
             _Controller = new Controller();
@@ -39,18 +41,47 @@ namespace Vyrolan.VMCS
 
             _Controller.AddListener(_Listener);
 
-            //var mma = new Actions.MouseMoveAction { Axis = Actions.PositionTrackingAxis.Screen, MinDistance = 0, Tracker = _HandManager.RightHand.FingerTracker };
-            //var rt = new RangeTrigger(_HandManager.RightHand.FingerCountState) { RequiresStabilized = true, MinValue = 1, MaxValue = 1, Resistance = 0, Stickiness = 1, Name = "1 Finger" };
-            //mma.RegisterTrigger(rt);
+            /*
+            var mma = new MouseMoveAction { Axis = PositionTrackingAxis.Screen, MinDistance = 0, Tracker = _HandManager.RightHand.FingerTracker };
+            var rt = new RangeTrigger(_HandManager.RightHand.FingerCountState) { RequiresStabilized = true, MinValue = 1, MaxValue = 1, Resistance = 0, Stickiness = 1, Name = "1 Finger" };
+            mma.RegisterTrigger(rt);
 
-            var sa = new Actions.MouseClickAction { Button = WindowsInput.Native.VirtualKeyCode.RBUTTON, IsDoubleClick = false };
-            var rt = new Triggers.GestureTriggerCircle { Hand = _HandManager.RightHand, IsClockwise = true, MinRadius = 0, MaxRadius = 1000, RequiresStabilized = true, Name = "circle!" };
+            var sa = new MouseClickAction { Button = VirtualKeyCode.RBUTTON, IsDoubleClick = false };
+            var rt = new GestureTriggerCircle { Hand = _HandManager.RightHand, IsClockwise = true, MinRadius = 0, MaxRadius = 1000, RequiresStabilized = true, Name = "circle!" };
             sa.RegisterTrigger(rt);
             _GestureDispatcher.RegisterTrigger(rt);
 
-            var mma2 = new Actions.ScrollAction { Axis = Actions.PositionTrackingAxis.Y, Tracker = _HandManager.LeftHand.HandTracker, IsAccelerated = true, Lines = 1, IsContinuous = true, MinDistance = 25 };
+            var mma2 = new ScrollAction { Axis = PositionTrackingAxis.Y, Tracker = _HandManager.LeftHand.HandTracker, IsAccelerated = true, Lines = 1, IsContinuous = true, MinDistance = 25 };
             var lt = new RangeTrigger(_HandManager.LeftHand.FingerCountState) { RequiresStabilized = true, MinValue = 1, MaxValue = 1, Resistance = 0, Stickiness = 1, Name = "LH1F" };
             mma2.RegisterTrigger(lt);
+
+            var mma2 = new KeyHoldAction {Key = VirtualKeyCode.LSHIFT};
+            var lt3 = new RangeTrigger(_HandManager.LeftHand.RollState) { RequiresStabilized = true, MinValue = 45, MaxValue = 105, Resistance = 0, Stickiness = 5, Name = "LH1F" };
+            mma2.RegisterTrigger(lt3);
+            */
+
+            var sa = new KeyPressAction {Key = VirtualKeyCode.VK_A};
+            sa.AddModifier(VirtualKeyCode.SHIFT);
+            var rt = new GestureTriggerCircle { Hand = _HandManager.RightHand, IsClockwise = true, MinRadius = 0, MaxRadius = 1000, RequiresStabilized = true, Name = "circle!" };
+            sa.RegisterTrigger(rt);
+            _GestureDispatcher.RegisterTrigger(rt);
+
+            var sa2 = new KeyPressAction { Key = VirtualKeyCode.VK_A };
+            var rt2 = new GestureTriggerCircle { Hand = _HandManager.RightHand, IsClockwise = false, MinRadius = 0, MaxRadius = 1000, RequiresStabilized = true, Name = "circle!" };
+            sa2.RegisterTrigger(rt2);
+            _GestureDispatcher.RegisterTrigger(rt2);
+
+            var kma = new KeyMacroAction();
+            kma.AddKeys(VirtualKeyCode.LMENU, VirtualKeyCode.TAB);
+            var lt = new GestureTriggerCircle { Hand = _HandManager.LeftHand, IsClockwise = true, MinRadius = 0, MaxRadius = 1000, RequiresStabilized = true, Name = "circle!" };
+            kma.RegisterTrigger(lt);
+            _GestureDispatcher.RegisterTrigger(lt);
+
+            var kma2 = new KeyMacroAction();
+            kma2.AddKeys(VirtualKeyCode.LCONTROL, VirtualKeyCode.VK_R, VirtualKeyCode.LCONTROL, VirtualKeyCode.VK_R);
+            var lt2 = new GestureTriggerCircle { Hand = _HandManager.LeftHand, IsClockwise = false, MinRadius = 0, MaxRadius = 1000, RequiresStabilized = true, Name = "circle!" };
+            kma2.RegisterTrigger(lt2);
+            _GestureDispatcher.RegisterTrigger(lt2);
         }
 
         private long _LastLogTime;

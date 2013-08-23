@@ -18,6 +18,7 @@ namespace Vyrolan.VMCS.Gestures
             var c = new VyroGestureCircle { Gesture = gesture };
             c._Radius.Initialize(Convert.ToInt64(c.Gesture.Radius));
             c.IsClockwise = (c.Gesture.Pointable.Direction.AngleTo(c.Gesture.Normal) <= Math.PI / 4);
+            ControlSystem.StaticLog(string.Format("{0} <-- {1}", c.IsClockwise, c.Gesture.Pointable.Direction.AngleTo(c.Gesture.Normal)));
             return c;
         }
 
