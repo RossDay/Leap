@@ -71,11 +71,12 @@
     <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
   </PropertyGroup>
   <PropertyGroup>
-    <StartupObject>Vyrolan.VMCS.App</StartupObject>
+    <StartupObject>Vyrolan.VMCS.Program</StartupObject>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="LeapCSharp.NET4.0">
       <HintPath>..\LeapSDK\lib\LeapCSharp.NET4.0.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -94,6 +95,7 @@
     <Reference Include="PresentationFramework" />
     <Reference Include="WindowsInput">
       <HintPath>..\InputSimulator\0.2.0.0\WindowsInput.dll</HintPath>
+      <Private>True</Private>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -110,6 +112,7 @@
     <Compile Include="Actions\ScrollAction.cs" />
     <Compile Include="ControlSystem.cs" />
     <Compile Include="HandManager.cs" />
+    <Compile Include="Program.cs" />
     <Compile Include="Native.cs" />
     <Compile Include="PositionTracker.cs" />
     <Compile Include="Triggers\BaseTrigger.cs" />
@@ -169,6 +172,13 @@
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Target Name="AfterResolveReferences">
+    <ItemGroup>
+      <EmbeddedResource Include="@(ReferenceCopyLocalPaths)" Condition="'%(ReferenceCopyLocalPaths.Extension)' == '.dll'">
+        <LogicalName>%(ReferenceCopyLocalPaths.DestinationSubDirectory)%(ReferenceCopyLocalPaths.Filename)%(ReferenceCopyLocalPaths.Extension)</LogicalName>
+      </EmbeddedResource>
+    </ItemGroup>
+  </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
