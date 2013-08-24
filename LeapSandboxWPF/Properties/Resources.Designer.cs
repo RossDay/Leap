@@ -60,16 +60,16 @@ namespace Vyrolan.VMCS.Properties {
             }
         }
         
-        internal static byte[] Leap {
+        internal static byte[] Leap_dll {
             get {
-                object obj = ResourceManager.GetObject("Leap", resourceCulture);
+                object obj = ResourceManager.GetObject("Leap_dll", resourceCulture);
                 return ((byte[])(obj));
             }
         }
         
-        internal static byte[] LeapCSharp {
+        internal static byte[] LeapCSharp_dll {
             get {
-                object obj = ResourceManager.GetObject("LeapCSharp", resourceCulture);
+                object obj = ResourceManager.GetObject("LeapCSharp_dll", resourceCulture);
                 return ((byte[])(obj));
             }
         }

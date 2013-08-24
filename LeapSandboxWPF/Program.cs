@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -14,8 +15,8 @@ namespace Vyrolan.VMCS
             AppDomain.CurrentDomain.AssemblyResolve += OnResolveAssembly;
 
             var path = CreateNativeDLLTempPath();
-            LoadNativeDLL(path, "Leap.dll", VMCS.Properties.Resources.Leap);
-            LoadNativeDLL(path, "LeapCSharp.dll", VMCS.Properties.Resources.LeapCSharp);
+            LoadNativeDLL(path, "Leap.dll", VMCS.Properties.Resources.Leap_dll);
+            LoadNativeDLL(path, "LeapCSharp.dll", VMCS.Properties.Resources.LeapCSharp_dll);
 
             App.Main(); // Run WPF startup code.
         }
@@ -37,9 +38,24 @@ namespace Vyrolan.VMCS
 
         private static void LoadNativeDLL(string tempPath, string name, byte[] resourceBytes)
         {
+            var tempBuffer = new byte[2 * 1024 * 1024];
+            var length = 0L;
+            using (var gzipResource = new MemoryStream(resourceBytes))
+            {
+                using (var tempMem = new MemoryStream(tempBuffer))
+                {
+                    using (var gz = new GZipStream(gzipResource, CompressionMode.Decompress))
+                    {
+                        gz.CopyTo(tempMem);
+                        length = tempMem.Position;
+                    }
+                }
+            }
+
             var dllPath = Path.Combine(tempPath, name);
-            if (!File.Exists(dllPath) || !File.ReadAllBytes(dllPath).SequenceEqual(resourceBytes))
-                File.WriteAllBytes(dllPath, resourceBytes);
+            if (!File.Exists(dllPath) || !File.ReadAllBytes(dllPath).SequenceEqual(tempBuffer.Take((int)length)))
+                using (var f = File.OpenWrite(dllPath))
+                    f.Write(tempBuffer, 0, (int)length);
 
             LoadLibrary(dllPath);
         }

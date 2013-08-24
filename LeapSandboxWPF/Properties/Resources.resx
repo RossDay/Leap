@@ -118,10 +118,10 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="Leap" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\NativeLibraries\Leap.dll;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="LeapCSharp_dll" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\NativeLibraries\LeapCSharp.dll.gz;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="LeapCSharp" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\NativeLibraries\LeapCSharp.dll;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="Leap_dll" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\NativeLibraries\Leap.dll.gz;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
 </root>
