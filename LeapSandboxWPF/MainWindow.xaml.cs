@@ -28,7 +28,8 @@ namespace Vyrolan.VMCS
 
         private void OnClosing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            _ControlSystem.Dispose();
+            if (_ControlSystem != null)
+                _ControlSystem.Dispose();
         }
     }
 }

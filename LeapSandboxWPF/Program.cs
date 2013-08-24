@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.InteropServices;
 
 namespace Vyrolan.VMCS
 {
@@ -12,7 +13,35 @@ namespace Vyrolan.VMCS
         {
             AppDomain.CurrentDomain.AssemblyResolve += OnResolveAssembly;
 
+            var path = CreateNativeDLLTempPath();
+            LoadNativeDLL(path, "Leap.dll", VMCS.Properties.Resources.Leap);
+            LoadNativeDLL(path, "LeapCSharp.dll", VMCS.Properties.Resources.LeapCSharp);
+
             App.Main(); // Run WPF startup code.
+        }
+
+        [DllImport("kernel32", SetLastError = true, CharSet = CharSet.Unicode)]
+        static extern IntPtr LoadLibrary(string lpFileName);
+
+        private static string CreateNativeDLLTempPath()
+        {
+            var an = Assembly.GetExecutingAssembly().GetName();
+            var tempFolder = String.Format("{0}.{1}.{2}", an.Name, an.ProcessorArchitecture, an.Version);
+            var dirName = Path.Combine(Path.GetTempPath(), tempFolder);
+
+            if (!Directory.Exists(dirName))
+                Directory.CreateDirectory(dirName);
+
+            return dirName;
+        }
+
+        private static void LoadNativeDLL(string tempPath, string name, byte[] resourceBytes)
+        {
+            var dllPath = Path.Combine(tempPath, name);
+            if (!File.Exists(dllPath) || !File.ReadAllBytes(dllPath).SequenceEqual(resourceBytes))
+                File.WriteAllBytes(dllPath, resourceBytes);
+
+            LoadLibrary(dllPath);
         }
 
         private static Assembly OnResolveAssembly(object sender, ResolveEventArgs e)
