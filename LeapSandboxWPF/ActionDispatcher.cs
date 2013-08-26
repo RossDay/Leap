@@ -10,23 +10,37 @@ namespace Vyrolan.VMCS
 {
     internal class ActionDispatcher : IGestureDispatcher
     {
-        private ICollection<BaseTrigger> _Triggers = new List<BaseTrigger>();
-        private ICollection<BaseAction> _Actions = new List<BaseAction>();
+        private Dictionary<string, BaseTrigger> _Triggers = new Dictionary<string, BaseTrigger>();
+        private Dictionary<string, BaseAction> _Actions = new Dictionary<string, BaseAction>();
         private ICollection<ConfigurationMode> _Modes = new List<ConfigurationMode>();
 
         public void AddTrigger(BaseTrigger trigger)
         {
-            _Triggers.Add(trigger);
+            trigger.Triggered += OnTriggerChanged;
+            _Triggers.Add(trigger.Name, trigger);
         }
-
         public bool RemoveTrigger(BaseTrigger trigger)
         {
-            return _Triggers.Remove(trigger);
+            trigger.Triggered -= OnTriggerChanged;
+            return _Triggers.Remove(trigger.Name);
+        }
+
+        public void AddAction(BaseAction action)
+        {
+            _Actions.Add(action.Name, action);
+        }
+        public bool RemoveAction(BaseAction action)
+        {
+            return _Actions.Remove(action.Name);
+        }
+
+        private void OnTriggerChanged(object sender, TriggerEventArgs e)
+        {
         }
 
         public void Dispatch(VyroGesture gesture)
         {
-            foreach (GestureTrigger trigger in _Triggers.Where(t => t is GestureTrigger))
+            foreach (GestureTrigger trigger in _Triggers.Values.Where(t => t is GestureTrigger))
                 if (trigger.Check(gesture))
                     trigger.Activate();
         }

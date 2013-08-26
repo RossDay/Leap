@@ -59,7 +59,7 @@ namespace Vyrolan.VMCS.Actions
 
         public MouseDragAction(string name) : base(name) { }
 
-        protected override void Begin()
+        protected override void BeginImpl()
         {
             switch (Button)
             {
@@ -72,7 +72,7 @@ namespace Vyrolan.VMCS.Actions
             }
         }
 
-        protected override void End()
+        protected override void EndImpl()
         {
             switch (Button)
             {

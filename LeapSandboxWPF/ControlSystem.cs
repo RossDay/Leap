@@ -63,24 +63,24 @@ namespace Vyrolan.VMCS
             var sa = new KeyPressAction("PressShiftA") {Key = VirtualKeyCode.VK_A};
             sa.AddModifier(VirtualKeyCode.SHIFT);
             var rt = new GestureTriggerCircle("RightHandCwCircle") { Hand = _HandManager.RightHand, IsClockwise = true, MinRadius = 0, MaxRadius = 1000, RequiresStabilized = true };
-            sa.RegisterTrigger(rt);
+            _ActionDispatcher.AddAction(sa);
             _ActionDispatcher.AddTrigger(rt);
 
             var sa2 = new KeyPressAction("PressA") { Key = VirtualKeyCode.VK_A };
             var rt2 = new GestureTriggerCircle("RightHandCcwCircle") { Hand = _HandManager.RightHand, IsClockwise = false, MinRadius = 0, MaxRadius = 1000, RequiresStabilized = true };
-            sa2.RegisterTrigger(rt2);
+            _ActionDispatcher.AddAction(sa2);
             _ActionDispatcher.AddTrigger(rt2);
 
             var kma = new KeyMacroAction("Alt+Tab");
             kma.AddKeys(VirtualKeyCode.LMENU, VirtualKeyCode.TAB);
             var lt = new GestureTriggerCircle("LeftHandCwCircle") { Hand = _HandManager.LeftHand, IsClockwise = true, MinRadius = 0, MaxRadius = 1000, RequiresStabilized = true };
-            kma.RegisterTrigger(lt);
+            _ActionDispatcher.AddAction(kma);
             _ActionDispatcher.AddTrigger(lt);
 
             var kma2 = new KeyMacroAction("CtrlR+CtrlR");
             kma2.AddKeys(VirtualKeyCode.LCONTROL, VirtualKeyCode.VK_R, VirtualKeyCode.LCONTROL, VirtualKeyCode.VK_R);
             var lt2 = new GestureTriggerCircle("LeftHandCcwCircle") { Hand = _HandManager.LeftHand, IsClockwise = false, MinRadius = 0, MaxRadius = 1000, RequiresStabilized = true };
-            kma2.RegisterTrigger(lt2);
+            _ActionDispatcher.AddAction(kma2);
             _ActionDispatcher.AddTrigger(lt2);
         }
 

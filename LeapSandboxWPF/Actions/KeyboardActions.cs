@@ -58,13 +58,13 @@ namespace Vyrolan.VMCS.Actions
 
         public KeyHoldAction(string name) : base(name) { }
 
-        protected override void Begin()
+        protected override void BeginImpl()
         {
             if (KeySet)
                 InputSimulator.Keyboard.KeyDown(Key);
         }
 
-        protected override void End()
+        protected override void EndImpl()
         {
             if (KeySet)
                 InputSimulator.Keyboard.KeyUp(Key);

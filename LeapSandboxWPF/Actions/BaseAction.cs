@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using Vyrolan.VMCS.Triggers;
+﻿using System.Linq;
 using WindowsInput;
 using WindowsInput.Native;
 
@@ -10,24 +8,13 @@ namespace Vyrolan.VMCS.Actions
     {
         protected static InputSimulator InputSimulator = new InputSimulator();
         protected readonly object _Lock = new object();
-        public bool IsFiring { get; protected set; }
+        private int _FiringCount;
+        public bool IsFiring { get { return _FiringCount > 0; } }
         public string Name { get; private set; }
 
         public BaseAction(string name)
         {
             Name = name;
-        }
-
-        private readonly ICollection<BaseTrigger> _Triggers = new List<BaseTrigger>();
-        public void RegisterTrigger(BaseTrigger trigger)
-        {
-            trigger.Triggered += OnTriggered;
-            _Triggers.Add(trigger);
-        }
-        public void UnregisterTrigger(BaseTrigger trigger)
-        {
-            if (_Triggers.Remove(trigger))
-                trigger.Triggered -= OnTriggered;
         }
 
         private static readonly VirtualKeyCode[] _Modifiers =
@@ -47,30 +34,30 @@ namespace Vyrolan.VMCS.Actions
         {
             return _MouseButtons.Contains(key);
         }
-
-        private void OnTriggered(object sender, TriggerEventArgs e)
+        public void Begin()
         {
             lock (_Lock)
-                if (e.IsTriggered)
-                {
-                    if (!IsFiring)
-                    {
-                        IsFiring = true;
-                        Begin();
-                    }
-                }
-                else
-                {
-                    if (IsFiring)
-                    {
-                        End();
-                        IsFiring = false;
-                    }
-                }
+            {
+                var flag = !IsFiring;
+                ++_FiringCount;
+                if (flag)
+                    BeginImpl();
+            }
         }
 
-        protected abstract void Begin();
-        protected abstract void End();
+        public void End()
+        {
+            lock (_Lock)
+            {
+                var flag = IsFiring;
+                --_FiringCount;
+                if (flag)
+                    EndImpl();
+            }
+        }
+
+        protected abstract void BeginImpl();
+        protected abstract void EndImpl();
     }
 
     internal abstract class DiscreteAction : BaseAction
@@ -79,14 +66,13 @@ namespace Vyrolan.VMCS.Actions
 
         protected abstract void Fire();
 
-        protected override void Begin()
+        protected override void BeginImpl()
         {
             Fire();
-            lock (_Lock)
-                IsFiring = false;
+            End();
         }
 
-        protected override void End()
+        protected override void EndImpl()
         {
         }
     }
