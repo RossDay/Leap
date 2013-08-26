@@ -82,6 +82,11 @@ namespace Vyrolan.VMCS
             var lt2 = new GestureTriggerCircle("LeftHandCcwCircle") { Hand = _HandManager.LeftHand, IsClockwise = false, MinRadius = 0, MaxRadius = 1000, RequiresStabilized = true };
             _ActionDispatcher.AddAction(kma2);
             _ActionDispatcher.AddTrigger(lt2);
+
+            _LogAction(rt.ToXml());
+            _LogAction(rt2.ToXml());
+            _LogAction(lt.ToXml());
+            _LogAction(lt2.ToXml());
         }
 
         private long _LastLogTime;

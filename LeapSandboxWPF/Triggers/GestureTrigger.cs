@@ -21,8 +21,11 @@ namespace Vyrolan.VMCS.Triggers
 
     internal class GestureTriggerCircle : GestureTrigger
     {
+        [ConfigurationParameter("isClockwise")]
         public bool IsClockwise { get; set; }
+        [ConfigurationParameter("minRadius")]
         public int MinRadius { get; set; }
+        [ConfigurationParameter("maxRadius")]
         public int MaxRadius { get; set; }
 
         public GestureTriggerCircle(string name) : base(name) { }
