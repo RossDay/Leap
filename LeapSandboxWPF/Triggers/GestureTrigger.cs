@@ -2,13 +2,20 @@
 
 namespace Vyrolan.VMCS.Triggers
 {
-    internal abstract class GestureTrigger : BaseTrigger
+    internal abstract class GestureTrigger : DiscreteTrigger
     {
+        protected GestureTrigger(string name) : base(name) { }
+        
         protected abstract bool CheckGesture(VyroGesture gesture);
 
         public bool Check(VyroGesture gesture)
         {
             return (CheckHand(gesture.HandIds) && CheckGesture(gesture));
+        }
+
+        public void Activate()
+        {
+            IsTriggered = true;
         }
     }
 
@@ -17,6 +24,8 @@ namespace Vyrolan.VMCS.Triggers
         public bool IsClockwise { get; set; }
         public int MinRadius { get; set; }
         public int MaxRadius { get; set; }
+
+        public GestureTriggerCircle(string name) : base(name) { }
 
         protected override bool CheckGesture(VyroGesture gesture)
         {
@@ -34,6 +43,8 @@ namespace Vyrolan.VMCS.Triggers
         public long MaxDistance { get; set; }
         public int MinVelocity { get; set; }
         public int MaxVelocity { get; set; }
+
+        public GestureTriggerSwipe(string name) : base(name) { }
 
         protected override bool CheckGesture(VyroGesture gesture)
         {

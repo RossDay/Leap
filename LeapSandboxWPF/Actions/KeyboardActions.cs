@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using WindowsInput.Native;
 
@@ -20,6 +19,8 @@ namespace Vyrolan.VMCS.Actions
                 KeySet = true;
             }
         }
+
+        public KeyPressAction(string name) : base(name) { }
 
         public void AddModifier(VirtualKeyCode modifier)
         {
@@ -55,6 +56,8 @@ namespace Vyrolan.VMCS.Actions
             }
         }
 
+        public KeyHoldAction(string name) : base(name) { }
+
         protected override void Begin()
         {
             if (KeySet)
@@ -71,6 +74,8 @@ namespace Vyrolan.VMCS.Actions
     internal class KeyMacroAction : DiscreteAction
     {
         private ICollection<VirtualKeyCode> _Keys = new List<VirtualKeyCode>();
+
+        public KeyMacroAction(string name) : base(name) { }
 
         public void AddKey(VirtualKeyCode key)
         {

@@ -15,6 +15,8 @@ namespace Vyrolan.VMCS.Actions
         public int MinDistance { get; set; }
         public bool IsContinuous { get; set; }
 
+        protected PositionTrackingAction(string name) : base(name) { }
+
         protected abstract IEnumerable<PositionTrackingAxis> ValidAxes { get; }
         private PositionTrackingAxis _Axis;
         public PositionTrackingAxis Axis

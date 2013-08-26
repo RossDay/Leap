@@ -11,7 +11,8 @@ namespace Vyrolan.VMCS.Triggers
         public long StickinessTime { get; set; }
         private long LastChangeTime { get; set; }
 
-        public RangeTrigger(HandState<int> state)
+        public RangeTrigger(string name, HandState<int> state)
+            : base(name)
         {
             Hand = state.Hand;
             state.ValueChanged += OnStateValueChanged;

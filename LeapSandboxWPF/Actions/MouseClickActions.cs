@@ -3,7 +3,7 @@ using WindowsInput.Native;
 
 namespace Vyrolan.VMCS.Actions
 {
-    class MouseClickAction : DiscreteAction
+    internal class MouseClickAction : DiscreteAction
     {
         public bool IsDoubleClick { get; set; }
 
@@ -19,6 +19,8 @@ namespace Vyrolan.VMCS.Actions
                     throw new ArgumentOutOfRangeException("value", "Must be the left or right mouse button.");
             }
         }
+
+        public MouseClickAction(string name) : base(name) { }
 
         protected override void Fire()
         {
@@ -40,7 +42,7 @@ namespace Vyrolan.VMCS.Actions
         }
     }
 
-    class MouseDragAction : BaseAction
+    internal class MouseDragAction : BaseAction
     {
         private VirtualKeyCode _Button;
         public VirtualKeyCode Button
@@ -54,6 +56,8 @@ namespace Vyrolan.VMCS.Actions
                     throw new ArgumentOutOfRangeException("value", "Must be the left or right mouse button.");
             }
         }
+
+        public MouseDragAction(string name) : base(name) { }
 
         protected override void Begin()
         {

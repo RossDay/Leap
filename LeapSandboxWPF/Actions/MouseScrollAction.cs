@@ -4,11 +4,13 @@ using Leap;
 
 namespace Vyrolan.VMCS.Actions
 {
-    class MouseScrollAction : PositionTrackingAction
+    internal class MouseScrollAction : PositionTrackingAction
     {
         public int Lines { get; set; }
         public bool IsAccelerated { get; set; }
         public bool IsInverted { get; set; }
+
+        public MouseScrollAction(string name) : base(name) { }
 
         protected override IEnumerable<PositionTrackingAxis> ValidAxes 
         {
@@ -23,8 +25,10 @@ namespace Vyrolan.VMCS.Actions
         }
     }
 
-    class DiscreteMouseScrollAction : DiscreteAction
+    internal class DiscreteMouseScrollAction : DiscreteAction
     {
+        public DiscreteMouseScrollAction(string name) : base(name) { }
+
         public int Lines { get; set; }
         public bool IsUp { get; set; }
 

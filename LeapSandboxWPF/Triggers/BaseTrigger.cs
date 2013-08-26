@@ -11,15 +11,20 @@ namespace Vyrolan.VMCS.Triggers
 
     internal abstract class BaseTrigger
     {
-        public string Name { get; set; }
+        public string Name { get; private set; }
         public PersistentHand Hand { get; set; }
         public bool RequiresStabilized { get; set; }
 
-        private bool _IsTriggered;
-        public bool IsTriggered
+        protected BaseTrigger(string name)
+        {
+            Name = name;
+        }
+
+        protected bool _IsTriggered;
+        public virtual bool IsTriggered
         {
             get { return _IsTriggered; }
-            set
+            protected set
             {
                 if (CheckHand(null) && (!_IsTriggered.Equals(value) || value))
                 {
@@ -27,11 +32,6 @@ namespace Vyrolan.VMCS.Triggers
                     OnTriggered();
                 }
             }
-        }
-
-        public void FireManually()
-        {
-            IsTriggered = true;
         }
 
         public event EventHandler<TriggerEventArgs> Triggered;
@@ -53,6 +53,21 @@ namespace Vyrolan.VMCS.Triggers
 
             // Check the trigger's list of involved hands if there is one
             return (candidateHandIds == null || candidateHandIds.Contains(Hand.Id));
+        }
+    }
+
+    internal abstract class DiscreteTrigger : BaseTrigger
+    {
+        protected DiscreteTrigger(string name) : base(name) { }
+
+        public override bool IsTriggered
+        {
+            get { return base.IsTriggered; }
+            protected set
+            {
+                base.IsTriggered = value;
+                _IsTriggered = false;
+            }
         }
     }
 }

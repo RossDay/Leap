@@ -11,7 +11,8 @@ namespace Vyrolan.VMCS.Actions
         private double _ScaleFactorX;
         private double _ScaleFactorY;
 
-        public MouseMoveAction()
+        public MouseMoveAction(string name)
+            : base(name)
         {
             SetSensitivities();
         }

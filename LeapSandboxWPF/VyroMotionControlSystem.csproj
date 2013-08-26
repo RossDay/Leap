@@ -103,6 +103,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="ActionDispatcher.cs" />
     <Compile Include="Actions\BaseAction.cs" />
     <Compile Include="Actions\KeyboardActions.cs" />
     <Compile Include="Actions\MouseClickActions.cs" />
@@ -116,7 +117,7 @@
     <Compile Include="Native.cs" />
     <Compile Include="PositionTracker.cs" />
     <Compile Include="Triggers\BaseTrigger.cs" />
-    <Compile Include="Gestures\GestureDispatcher.cs" />
+    <Compile Include="Gestures\IGestureDispatcher.cs" />
     <Compile Include="Gestures\GestureRecognizer.cs" />
     <Compile Include="Gestures\SmoothedIntegerState.cs" />
     <Compile Include="Gestures\VyroGestureCircle.cs" />

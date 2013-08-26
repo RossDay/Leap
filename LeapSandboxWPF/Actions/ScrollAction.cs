@@ -4,11 +4,13 @@ using Leap;
 
 namespace Vyrolan.VMCS.Actions
 {
-    class ScrollAction : PositionTrackingAction
+    internal class ScrollAction : PositionTrackingAction
     {
         public int Lines { get; set; }
         public bool IsAccelerated { get; set; }
         public bool IsInverted { get; set; }
+
+        public ScrollAction(string name) : base(name) { }
 
         protected override IEnumerable<PositionTrackingAxis> ValidAxes
         {
@@ -27,10 +29,12 @@ namespace Vyrolan.VMCS.Actions
         }
     }
 
-    class DiscreteScrollAction : DiscreteAction
+    internal class DiscreteScrollAction : DiscreteAction
     {
         public int Lines { get; set; }
         public bool IsUp { get; set; }
+
+        public DiscreteScrollAction(string name) : base(name) { }
 
         protected override void Fire()
         {

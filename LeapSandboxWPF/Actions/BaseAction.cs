@@ -10,9 +10,15 @@ namespace Vyrolan.VMCS.Actions
     {
         protected static InputSimulator InputSimulator = new InputSimulator();
         protected readonly object _Lock = new object();
-        private ICollection<BaseTrigger> _Triggers = new List<BaseTrigger>();
         public bool IsFiring { get; protected set; }
+        public string Name { get; private set; }
 
+        public BaseAction(string name)
+        {
+            Name = name;
+        }
+
+        private readonly ICollection<BaseTrigger> _Triggers = new List<BaseTrigger>();
         public void RegisterTrigger(BaseTrigger trigger)
         {
             trigger.Triggered += OnTriggered;
@@ -24,7 +30,7 @@ namespace Vyrolan.VMCS.Actions
                 trigger.Triggered -= OnTriggered;
         }
 
-        private static VirtualKeyCode[] _Modifiers =
+        private static readonly VirtualKeyCode[] _Modifiers =
             {
                 VirtualKeyCode.SHIFT, VirtualKeyCode.LSHIFT, VirtualKeyCode.RSHIFT,
                 VirtualKeyCode.CONTROL, VirtualKeyCode.LCONTROL, VirtualKeyCode.RCONTROL, 
@@ -36,7 +42,7 @@ namespace Vyrolan.VMCS.Actions
             return _Modifiers.Contains(key);
         }
 
-        private static VirtualKeyCode[] _MouseButtons = { VirtualKeyCode.LBUTTON, VirtualKeyCode.MBUTTON, VirtualKeyCode.RBUTTON };
+        private static readonly VirtualKeyCode[] _MouseButtons = { VirtualKeyCode.LBUTTON, VirtualKeyCode.MBUTTON, VirtualKeyCode.RBUTTON };
         protected static bool IsMouseButton(VirtualKeyCode key)
         {
             return _MouseButtons.Contains(key);
@@ -69,6 +75,8 @@ namespace Vyrolan.VMCS.Actions
 
     internal abstract class DiscreteAction : BaseAction
     {
+        protected DiscreteAction(string name) : base(name) { }
+
         protected abstract void Fire();
 
         protected override void Begin()

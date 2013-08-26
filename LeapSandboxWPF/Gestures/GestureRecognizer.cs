@@ -7,9 +7,9 @@ namespace Vyrolan.VMCS.Gestures
     internal class GestureRecognizer : IFrameUpdate
     {
         private readonly LinkedList<VyroGesture> _CurrentGestures = new LinkedList<VyroGesture>();
-        private readonly GestureDispatcher _Dispatcher;
+        private readonly IGestureDispatcher _Dispatcher;
 
-        public GestureRecognizer(GestureDispatcher dispatcher)
+        public GestureRecognizer(IGestureDispatcher dispatcher)
         {
             _Dispatcher = dispatcher;
         }
