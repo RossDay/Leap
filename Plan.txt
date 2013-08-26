@@ -1,0 +1,40 @@
+1) Business Address 
+	- $100 per year 
+	- http://www.mailcenterofchicago.com/
+2) DBA 
+	- $159
+	- Requires Address
+	- http://www.legalzoom.com
+3) Federal Employer Identification Number (FEIN) 
+	- Free
+	- Requires Address, DBA?
+	- http://www.irs.gov/Businesses/Small-Businesses-&-Self-Employed/Apply-for-an-Employer-Identification-Number-%28EIN%29-Online
+4) Illinois Business Tax (IBT) Number 
+	- Free?
+	- Requires Address, DBA, FEIN
+	- http://www.revenue.state.il.us/Businesses/register.htm
+5) Cook County Business License
+	- $40 per 2 years
+	- Requres Address, DBA, FEIN, IBT
+	- http://www.co.cook.il.us/portal/server.pt/community/revenue,_department_of/313/general_business_license
+6) Chicago Business License 
+	- ??? per 2 years
+	- Requires Address, DBA, FEIN, IBT
+	- http://www.cityofchicago.org/city/en/depts/bacp/provdrs/bus/svcs/apply_for_a_businesslicenseonline.html
+
+
+
+*) Business Bank Account and Credit Card - Free
+*) Register Domain Names - $69.54 per domain for 6 years, $347.70 for all 5 for 6 years - Done
+*) Web Hosting - http://winhost.com - $49.50 per year
+*) GitHub Micro - $7 per month
+*) Trademark VyroSoft and AppName 
+	- $275 each
+	- http://www.uspto.gov/trademarks/basics/
+*) Logo for VyroSoft and AppName
+	- http://www.logoyes.com - ~$60
+	- http://www.logomaker.com - Free
+*) Comodo Signing Certificate
+	- $179.95 per year
+	- http://www.comodo.com/e-commerce/code-signing/code-signing-certificate.php
+*) Resharper - $249 (50% off for startups?)
