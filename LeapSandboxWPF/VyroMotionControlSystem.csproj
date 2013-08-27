@@ -111,6 +111,8 @@
     <Compile Include="Actions\MouseScrollAction.cs" />
     <Compile Include="Actions\PositionTrackingAction.cs" />
     <Compile Include="Actions\ScrollAction.cs" />
+    <Compile Include="ConfigurationParameterAttribute.cs" />
+    <Compile Include="ConfigurationSerializer.cs" />
     <Compile Include="ControlSystem.cs" />
     <Compile Include="HandManager.cs" />
     <Compile Include="Program.cs" />

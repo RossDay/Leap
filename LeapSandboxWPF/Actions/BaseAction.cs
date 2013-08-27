@@ -10,8 +10,12 @@ namespace Vyrolan.VMCS.Actions
         protected readonly object _Lock = new object();
         private int _FiringCount;
         public bool IsFiring { get { return _FiringCount > 0; } }
+        [ConfigurationParameter("name")]
         public string Name { get; private set; }
 
+        static BaseAction()
+        {
+        }
         public BaseAction(string name)
         {
             Name = name;
@@ -58,6 +62,11 @@ namespace Vyrolan.VMCS.Actions
 
         protected abstract void BeginImpl();
         protected abstract void EndImpl();
+
+        public string ToXml()
+        {
+            return ConfigurationSerializer.ToXml(this);
+        }
     }
 
     internal abstract class DiscreteAction : BaseAction

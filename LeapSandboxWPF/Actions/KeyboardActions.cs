@@ -10,34 +10,56 @@ namespace Vyrolan.VMCS.Actions
         private VirtualKeyCode _Key;
         private bool KeySet { get; set; }
 
-        public VirtualKeyCode Key
-        {
-            get { return _Key; }
-            set
-            {
-                _Key = value;
-                KeySet = true;
-            }
-        }
-
         public KeyPressAction(string name) : base(name) { }
 
-        public void AddModifier(VirtualKeyCode modifier)
+            [ConfigurationParameter("key")]
+            public string Key
+            {
+                get { return _Key.ToString(); }
+                set
+                {
+                    try
+                    {
+                        _Key = (VirtualKeyCode)Enum.Parse(typeof(VirtualKeyCode), value);
+                        KeySet = true;
+                    }
+                    catch
+                    {
+                        ; // alert user about bad config
+                        KeySet = false;
+                    }
+                }
+            }
+
+        [ConfigurationParameter("mods")]
+        public string Modifiers
         {
-            if (IsModifier(modifier))
-                _Modifiers.Add(modifier);
-            else
-                throw new ArgumentOutOfRangeException("modifier", "Must be a modifier (SHIFT, CTRL, ALT, WIN).");
-        }
-        public bool RemoveModifier(VirtualKeyCode modifier)
-        {
-            return _Modifiers.Remove(modifier);
+            get { return String.Join(",", _Modifiers); }
+            set
+            {
+                _Modifiers.Clear();
+                VirtualKeyCode vk;
+                foreach (var key in value.Split(','))
+                {
+                    try
+                    {
+                        vk = (VirtualKeyCode)Enum.Parse(typeof(VirtualKeyCode), key);
+                    }
+                    catch
+                    {
+                        continue; // alert user about bad config
+                    }
+                    if (!IsModifier(vk))
+                        continue; // alert user about bad config
+                    _Modifiers.Add(vk);
+                }
+            }
         }
 
         protected override void Fire()
         {
             if (KeySet)
-                InputSimulator.Keyboard.ModifiedKeyStroke(_Modifiers, Key);
+                InputSimulator.Keyboard.ModifiedKeyStroke(_Modifiers, _Key);
         }
     }
 
@@ -46,13 +68,22 @@ namespace Vyrolan.VMCS.Actions
         private VirtualKeyCode _Key;
         private bool KeySet { get; set; }
 
-        public VirtualKeyCode Key
+        [ConfigurationParameter("key")]
+        public string Key
         {
-            get { return _Key; }
+            get { return _Key.ToString(); }
             set
             {
-                _Key = value;
-                KeySet = true;
+                try
+                {
+                    _Key = (VirtualKeyCode)Enum.Parse(typeof(VirtualKeyCode), value);
+                    KeySet = true;
+                }
+                catch
+                {
+                    ; // alert user about bad config
+                    KeySet = false;
+                }
             }
         }
 
@@ -61,13 +92,13 @@ namespace Vyrolan.VMCS.Actions
         protected override void BeginImpl()
         {
             if (KeySet)
-                InputSimulator.Keyboard.KeyDown(Key);
+                InputSimulator.Keyboard.KeyDown(_Key);
         }
 
         protected override void EndImpl()
         {
             if (KeySet)
-                InputSimulator.Keyboard.KeyUp(Key);
+                InputSimulator.Keyboard.KeyUp(_Key);
         }
     }
 
@@ -77,25 +108,27 @@ namespace Vyrolan.VMCS.Actions
 
         public KeyMacroAction(string name) : base(name) { }
 
-        public void AddKey(VirtualKeyCode key)
+        [ConfigurationParameter("keys")]
+        public string Keys
         {
-            _Keys.Add(key);
-        }
-
-        public void AddKeys(IEnumerable<VirtualKeyCode> keys)
-        {
-            foreach (var k in keys)
-                AddKey(k);
-        }
-
-        public void AddKeys(params VirtualKeyCode[] keys)
-        {
-            AddKeys((IEnumerable<VirtualKeyCode>)keys);
-        }
-
-        public void ClearKeys()
-        {
-            _Keys.Clear();
+            get { return String.Join(",", _Keys); }
+            set
+            {
+                _Keys.Clear();
+                VirtualKeyCode vk;
+                foreach (var key in value.Split(','))
+                {
+                    try
+                    {
+                        vk = (VirtualKeyCode)Enum.Parse(typeof(VirtualKeyCode), key);
+                    }
+                    catch
+                    {
+                        continue; // alert user about bad config
+                    }
+                    _Keys.Add(vk);
+                }
+            }
         }
 
         protected override void Fire()

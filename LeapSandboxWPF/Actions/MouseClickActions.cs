@@ -5,38 +5,44 @@ namespace Vyrolan.VMCS.Actions
 {
     internal class MouseClickAction : DiscreteAction
     {
-        public bool IsDoubleClick { get; set; }
-
         private VirtualKeyCode _Button;
-        public VirtualKeyCode Button
-        {
-            get { return _Button; }
-            set
-            {
-                if (IsMouseButton(value) && value != VirtualKeyCode.MBUTTON)
-                    _Button = value;
-                else 
-                    throw new ArgumentOutOfRangeException("value", "Must be the left or right mouse button.");
-            }
-        }
+        [ConfigurationParameter("isDbl")]
+        public bool IsDoubleClick { get; set; }
 
         public MouseClickAction(string name) : base(name) { }
 
+        [ConfigurationParameter("button")]
+        public string Button
+        {
+            get { return _Button.ToString(); }
+            set
+            {
+                try
+                {
+                    _Button = (VirtualKeyCode)Enum.Parse(typeof(VirtualKeyCode), value);
+                }
+                catch
+                {
+                    ; // alert user about bad config
+                }
+            }
+        }
+
         protected override void Fire()
         {
-            switch (Button)
+            switch (_Button)
             {
-                case VirtualKeyCode.LBUTTON:
-                    if (IsDoubleClick)
-                        InputSimulator.Mouse.LeftButtonDoubleClick();
-                    else
-                        InputSimulator.Mouse.LeftButtonClick();
-                    break;
                 case VirtualKeyCode.RBUTTON:
                     if (IsDoubleClick)
                         InputSimulator.Mouse.RightButtonDoubleClick();
                     else
                         InputSimulator.Mouse.RightButtonClick();
+                    break;
+                default: //case VirtualKeyCode.LBUTTON:
+                    if (IsDoubleClick)
+                        InputSimulator.Mouse.LeftButtonDoubleClick();
+                    else
+                        InputSimulator.Mouse.LeftButtonClick();
                     break;
             }
         }
@@ -45,42 +51,48 @@ namespace Vyrolan.VMCS.Actions
     internal class MouseDragAction : BaseAction
     {
         private VirtualKeyCode _Button;
-        public VirtualKeyCode Button
-        {
-            get { return _Button; }
-            set
-            {
-                if (IsMouseButton(value) && value != VirtualKeyCode.MBUTTON)
-                    _Button = value;
-                else
-                    throw new ArgumentOutOfRangeException("value", "Must be the left or right mouse button.");
-            }
-        }
 
         public MouseDragAction(string name) : base(name) { }
 
+        [ConfigurationParameter("button")]
+        public string Button
+        {
+            get { return _Button.ToString(); }
+            set
+            {
+                try
+                {
+                    _Button = (VirtualKeyCode)Enum.Parse(typeof(VirtualKeyCode), value);
+                }
+                catch
+                {
+                    ; // alert user about bad config
+                }
+            }
+        }
+
         protected override void BeginImpl()
         {
-            switch (Button)
+            switch (_Button)
             {
-                case VirtualKeyCode.LBUTTON:
-                    InputSimulator.Mouse.LeftButtonDown();
-                    break;
                 case VirtualKeyCode.RBUTTON:
                     InputSimulator.Mouse.RightButtonDown();
+                    break;
+                default: //case VirtualKeyCode.LBUTTON:
+                    InputSimulator.Mouse.LeftButtonDown();
                     break;
             }
         }
 
         protected override void EndImpl()
         {
-            switch (Button)
+            switch (_Button)
             {
-                case VirtualKeyCode.LBUTTON:
-                    InputSimulator.Mouse.LeftButtonUp();
-                    break;
                 case VirtualKeyCode.RBUTTON:
                     InputSimulator.Mouse.RightButtonUp();
+                    break;
+                default: //case VirtualKeyCode.LBUTTON:
+                    InputSimulator.Mouse.LeftButtonUp();
                     break;
             }
         }

@@ -12,13 +12,16 @@ namespace Vyrolan.VMCS.Actions
 
     internal abstract class PositionTrackingAction : BaseAction
     {
+        [ConfigurationParameter("minDist")]
         public int MinDistance { get; set; }
+        [ConfigurationParameter("isCont")]
         public bool IsContinuous { get; set; }
 
         protected PositionTrackingAction(string name) : base(name) { }
 
         protected abstract IEnumerable<PositionTrackingAxis> ValidAxes { get; }
         private PositionTrackingAxis _Axis;
+        [ConfigurationParameter("axis")]
         public PositionTrackingAxis Axis
         {
             get { return _Axis; }

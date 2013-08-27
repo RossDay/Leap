@@ -62,31 +62,7 @@ namespace Vyrolan.VMCS.Triggers
 
         public string ToXml()
         {
-            var xml = new StringBuilder();
-            xml.AppendFormat("<Trigger type=\"{0}\" ", GetType().Name);
-
-            var props = GetType().GetProperties();
-            foreach (var prop in props)
-            {
-                var param = prop.GetCustomAttributes(typeof(ConfigurationParameterAttribute), false).Cast<ConfigurationParameterAttribute>().FirstOrDefault();
-                if (param == null) continue;
-
-                xml.AppendFormat("{0}=\"{1}\" ", param.ParameterName, prop.GetValue(this, null));
-            }
-
-            xml.Append(" />");
-            return xml.ToString();
-        }
-    }
-
-    [AttributeUsage(AttributeTargets.Property, Inherited = true, AllowMultiple = false)]
-    internal sealed class ConfigurationParameterAttribute : Attribute
-    {
-        public string ParameterName { get; private set; }
-
-        public ConfigurationParameterAttribute(string parameterName)
-        {
-            ParameterName = parameterName;
+            return ConfigurationSerializer.ToXml(this);
         }
     }
 

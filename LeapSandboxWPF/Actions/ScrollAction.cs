@@ -6,8 +6,11 @@ namespace Vyrolan.VMCS.Actions
 {
     internal class ScrollAction : PositionTrackingAction
     {
+        [ConfigurationParameter("lines")]
         public int Lines { get; set; }
+        [ConfigurationParameter("isAccel")]
         public bool IsAccelerated { get; set; }
+        [ConfigurationParameter("isInverted")]
         public bool IsInverted { get; set; }
 
         public ScrollAction(string name) : base(name) { }
@@ -31,7 +34,9 @@ namespace Vyrolan.VMCS.Actions
 
     internal class DiscreteScrollAction : DiscreteAction
     {
+        [ConfigurationParameter("lines")]
         public int Lines { get; set; }
+        [ConfigurationParameter("isUp")]
         public bool IsUp { get; set; }
 
         public DiscreteScrollAction(string name) : base(name) { }
