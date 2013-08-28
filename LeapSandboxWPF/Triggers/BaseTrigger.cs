@@ -8,6 +8,7 @@ namespace Vyrolan.VMCS.Triggers
 {
     internal class TriggerEventArgs : EventArgs
     {
+        public string TriggerName { get; set; }
         public bool IsTriggered { get; set; }
     }
 
@@ -43,7 +44,7 @@ namespace Vyrolan.VMCS.Triggers
         protected void OnTriggered()
         {
             if (Triggered != null)
-                Triggered(this, new TriggerEventArgs { IsTriggered = IsTriggered });
+                Triggered(this, new TriggerEventArgs { TriggerName = Name, IsTriggered = IsTriggered });
         }
 
         protected bool CheckHand(IEnumerable<int> candidateHandIds)

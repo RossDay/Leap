@@ -42,9 +42,8 @@ namespace Vyrolan.VMCS.Actions
         {
             lock (_Lock)
             {
-                var flag = !IsFiring;
                 ++_FiringCount;
-                if (flag)
+                if (_FiringCount == 1)
                     BeginImpl();
             }
         }
@@ -53,9 +52,10 @@ namespace Vyrolan.VMCS.Actions
         {
             lock (_Lock)
             {
-                var flag = IsFiring;
+                if (_FiringCount < 1)
+                    return; // End without Begin
                 --_FiringCount;
-                if (flag)
+                if (!IsFiring)
                     EndImpl();
             }
         }
