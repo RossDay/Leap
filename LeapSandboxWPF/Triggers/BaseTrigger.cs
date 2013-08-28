@@ -12,7 +12,7 @@ namespace Vyrolan.VMCS.Triggers
         public bool IsTriggered { get; set; }
     }
 
-    internal abstract class BaseTrigger
+    internal abstract class BaseTrigger : IEquatable<BaseTrigger>
     {
         [ConfigurationParameter("name")]
         public string Name { get; private set; }
@@ -65,6 +65,25 @@ namespace Vyrolan.VMCS.Triggers
         {
             return ConfigurationSerializer.ToXml(this);
         }
+
+        #region Equals / GetHashCode
+        public override bool Equals(object obj)
+        {
+            var trigger = obj as BaseTrigger;
+            if (trigger == null) return false;
+            return Equals(trigger);
+        }
+
+        public bool Equals(BaseTrigger other)
+        {
+            return Name.Equals(other.Name);
+        }
+
+        public override int GetHashCode()
+        {
+            return Name.GetHashCode();
+        }
+        #endregion
     }
 
     internal abstract class DiscreteTrigger : BaseTrigger

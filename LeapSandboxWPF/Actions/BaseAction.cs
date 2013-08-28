@@ -1,10 +1,11 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using WindowsInput;
 using WindowsInput.Native;
 
 namespace Vyrolan.VMCS.Actions
 {
-    internal abstract class BaseAction
+    internal abstract class BaseAction : IEquatable<BaseAction>
     {
         protected static InputSimulator InputSimulator = new InputSimulator();
         protected readonly object _Lock = new object();
@@ -67,6 +68,25 @@ namespace Vyrolan.VMCS.Actions
         {
             return ConfigurationSerializer.ToXml(this);
         }
+
+        #region Equals / GetHashCode
+        public override bool Equals(object obj)
+        {
+            var action = obj as BaseAction;
+            if (action == null) return false;
+            return Equals(action);
+        }
+
+        public bool Equals(BaseAction other)
+        {
+            return Name.Equals(other.Name);
+        }
+
+        public override int GetHashCode()
+        {
+            return Name.GetHashCode();
+        }
+        #endregion
     }
 
     internal abstract class DiscreteAction : BaseAction

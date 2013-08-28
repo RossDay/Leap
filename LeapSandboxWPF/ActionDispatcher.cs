@@ -15,6 +15,7 @@ namespace Vyrolan.VMCS
         private readonly Dictionary<string, BaseAction> _Actions = new Dictionary<string, BaseAction>();
         private readonly Dictionary<string, ConfigurationMode> _Modes = new Dictionary<string, ConfigurationMode>();
         private readonly LinkedList<ConfigurationMode> _ActiveModes = new LinkedList<ConfigurationMode>();
+        private Dictionary<BaseTrigger, BaseAction> _ActiveMap;
 
         #region Add/Remove Trigger/Action/Mode
         public void AddTrigger(BaseTrigger trigger)
@@ -77,20 +78,49 @@ namespace Vyrolan.VMCS
         }
         #endregion
 
-        #region Activate/Deactivate Mode
-        private void ForAllTriggeredActionsInMode(ConfigurationMode mode, Action<BaseAction> actionDelegate)
+        #region UpdateActiveMap
+        private void UpdateActiveMap()
         {
-            foreach (var t in _Triggers.Where(t => t.Value.IsTriggered))
-            {
-                var actionName = mode.GetActionForTrigger(t.Key);
-                if (String.IsNullOrEmpty(actionName))
-                    continue; // trigger not in mode
-                BaseAction action;
-                if (!_Actions.TryGetValue(actionName, out action))
-                    continue; // must be bad config
-                actionDelegate(action);
-            }
-        }
+            string actionName;
+            BaseAction action;
+
+            // construct the new map
+            var map = new Dictionary<BaseTrigger, BaseAction>();
+            foreach (var triggerPair in _Triggers)
+                foreach (var mode in _ActiveModes)
+                {
+                    actionName = mode.GetActionForTrigger(triggerPair.Key);
+                    if (String.IsNullOrEmpty(actionName))
+                        continue; // trigger not in mode
+                    if (!_Actions.TryGetValue(actionName, out action))
+                        continue; // must be bad config
+                    map.Add(triggerPair.Value, action);
+                    break;
+                }
+
+            // check all triggered Triggers in current map to see if action is gone/different in new map
+            foreach (var mapPair in _ActiveMap.Where(p => p.Key.IsTriggered))
+                if (!map.TryGetValue(mapPair.Key, out action))
+                    // mapping is gone...action should end
+                    action.End();
+                else if (!action.Equals(mapPair.Value))
+                {
+                    // different action...end old, begin new
+                    action.End();
+                    mapPair.Value.Begin();
+                }
+
+            // begin any new triggered action not present in current
+            foreach (var mapPair in map)
+                if (!_ActiveMap.ContainsKey(mapPair.Key))
+                    // mapping is gone...action should end
+                    mapPair.Value.Begin();
+
+            _ActiveMap = map;
+        } 
+        #endregion
+
+        #region Activate/Deactivate Mode
         public void ActivateMode(string modeName)
         {
             lock (_Lock)
@@ -98,46 +128,36 @@ namespace Vyrolan.VMCS
                 ConfigurationMode mode;
                 if (!_Modes.TryGetValue(modeName, out mode))
                     return; // must  be bad config
-                DeactivateMode(modeName);
+                _ActiveModes.Remove(mode);
                 _ActiveModes.AddFirst(mode);
-                ForAllTriggeredActionsInMode(mode, a => a.Begin());
+                UpdateActiveMap();
             }
         }
         public void DeactivateMode(string modeName)
         {
-            ConfigurationMode mode;
-            if (!_Modes.TryGetValue(modeName, out mode))
-                return; // must  be bad config
-            _ActiveModes.Remove(mode);
-            ForAllTriggeredActionsInMode(mode, a => a.End());
-        } 
+            lock (_Lock)
+            {
+                ConfigurationMode mode;
+                if (!_Modes.TryGetValue(modeName, out mode))
+                    return; // must  be bad config
+                _ActiveModes.Remove(mode);
+                UpdateActiveMap();
+            }
+        }
         #endregion
 
-        #region GetCurrentActionForTrigger / OnTriggerChanged
-        private BaseAction GetCurrentActionForTrigger(string triggerName)
-        {
-            string actionName = null;
-            foreach (var activeMode in _ActiveModes)
-            {
-                actionName = activeMode.GetActionForTrigger(triggerName);
-                if (!String.IsNullOrEmpty(actionName))
-                    break;
-            }
-
-            BaseAction action;
-            if (!_Actions.TryGetValue(actionName, out action))
-                return null; // must be bad config
-            return action;
-        }
-
+        #region OnTriggerChanged
         private void OnTriggerChanged(object sender, TriggerEventArgs e)
         {
-            var action = GetCurrentActionForTrigger(e.TriggerName);
+            BaseAction action;
+            lock (_Lock)
+                if (!_ActiveMap.TryGetValue((BaseTrigger)sender, out action))
+                    return;
             if (e.IsTriggered)
                 action.Begin();
             else
                 action.End();
-        } 
+        }
         #endregion
 
         #region IGestureDispatcher

@@ -6,7 +6,7 @@ using System.Xml;
 
 namespace Vyrolan.VMCS
 {
-    internal class ConfigurationMode
+    internal class ConfigurationMode : IEquatable<ConfigurationMode>
     {
         private Dictionary<string, string> _Mappings = new Dictionary<string, string>();
         public string Name { get; private set; }
@@ -62,7 +62,12 @@ namespace Vyrolan.VMCS
         {
             var mode = obj as ConfigurationMode;
             if (mode == null) return false;
-            return Name.Equals(mode.Name);
+            return Equals(mode);
+        }
+
+        public bool Equals(ConfigurationMode other)
+        {
+            return Name.Equals(other.Name);
         }
 
         public override int GetHashCode()
