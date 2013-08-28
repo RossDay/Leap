@@ -17,67 +17,6 @@ namespace Vyrolan.VMCS
         private readonly LinkedList<ConfigurationMode> _ActiveModes = new LinkedList<ConfigurationMode>();
         private Dictionary<BaseTrigger, BaseAction> _ActiveMap;
 
-        #region Add/Remove Trigger/Action/Mode
-        public void AddTrigger(BaseTrigger trigger)
-        {
-            lock (_Lock)
-            {
-                if (_Triggers.ContainsKey(trigger.Name))
-                    return; // must be bad config
-                trigger.Triggered += OnTriggerChanged;
-                _Triggers.Add(trigger.Name, trigger);
-            }
-        }
-        public bool RemoveTrigger(BaseTrigger trigger)
-        {
-            lock (_Lock)
-            {
-                if (!_Triggers.ContainsKey(trigger.Name))
-                    return false;
-                trigger.Triggered -= OnTriggerChanged;
-                return _Triggers.Remove(trigger.Name);
-            }
-        }
-
-        public void AddAction(BaseAction action)
-        {
-            lock (_Lock)
-            {
-                if (_Actions.ContainsKey(action.Name))
-                    return; // must be bad config
-                _Actions.Add(action.Name, action);
-            }
-        }
-        public bool RemoveAction(BaseAction action)
-        {
-            lock (_Lock)
-            {
-                if (!_Actions.ContainsKey(action.Name))
-                    return false;
-                return _Actions.Remove(action.Name);
-            }
-        }
-
-        public void AddMode(ConfigurationMode mode)
-        {
-            lock (_Lock)
-            {
-                if (_Modes.ContainsKey(mode.Name))
-                    return; // must be bad config
-                _Modes.Add(mode.Name, mode);
-            }
-        }
-        public bool RemoveMode(ConfigurationMode mode)
-        {
-            lock (_Lock)
-            {
-                if (!_Modes.ContainsKey(mode.Name))
-                    return false;
-                return _Modes.Remove(mode.Name);
-            }
-        }
-        #endregion
-
         #region UpdateActiveMap
         private void UpdateActiveMap()
         {

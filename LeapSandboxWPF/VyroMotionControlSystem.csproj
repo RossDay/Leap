@@ -106,11 +106,13 @@
     <Compile Include="ActionDispatcher.cs" />
     <Compile Include="Actions\BaseAction.cs" />
     <Compile Include="Actions\KeyboardActions.cs" />
+    <Compile Include="Actions\ModeAction.cs" />
     <Compile Include="Actions\MouseClickActions.cs" />
     <Compile Include="Actions\MouseMoveAction.cs" />
     <Compile Include="Actions\MouseScrollAction.cs" />
     <Compile Include="Actions\PositionTrackingAction.cs" />
     <Compile Include="Actions\ScrollAction.cs" />
+    <Compile Include="Configuration.cs" />
     <Compile Include="ConfigurationMode.cs" />
     <Compile Include="ConfigurationParameterAttribute.cs" />
     <Compile Include="ConfigurationSerializer.cs" />

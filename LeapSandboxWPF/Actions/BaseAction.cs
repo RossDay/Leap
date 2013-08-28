@@ -8,15 +8,12 @@ namespace Vyrolan.VMCS.Actions
     internal abstract class BaseAction : IEquatable<BaseAction>
     {
         protected static InputSimulator InputSimulator = new InputSimulator();
-        protected readonly object _Lock = new object();
+        private readonly object _Lock = new object();
         private int _FiringCount;
         public bool IsFiring { get { return _FiringCount > 0; } }
         [ConfigurationParameter("name")]
         public string Name { get; private set; }
 
-        static BaseAction()
-        {
-        }
         public BaseAction(string name)
         {
             Name = name;

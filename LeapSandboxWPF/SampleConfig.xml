@@ -1,0 +1,29 @@
+<Configuration>
+  <Settings>
+  </Settings>
+  <Triggers>
+    <Trigger type="GestureTriggerCircle" isClockwise="True" minRadius="0" maxRadius="1000" name="RightHandCwCircle" reqStable="True" />
+    <Trigger type="GestureTriggerCircle" isClockwise="False" minRadius="0" maxRadius="1000" name="RightHandCcwCircle" reqStable="True" />
+    <Trigger type="GestureTriggerCircle" isClockwise="True" minRadius="0" maxRadius="1000" name="LeftHandCwCircle" reqStable="True" />
+    <Trigger type="GestureTriggerCircle" isClockwise="False" minRadius="0" maxRadius="1000" name="LeftHandCcwCircle" reqStable="True" />
+  </Triggers>
+  <Actions>
+    <Action type="KeyPressAction" key="VK_A" mods="SHIFT,LCONTROL" name="PressShiftA" />
+    <Action type="KeyPressAction" key="VK_A" mods="" name="PressA" />
+    <Action type="KeyMacroAction" keys="LMENU,TAB" name="Alt+Tab" />
+    <Action type="KeyMacroAction" keys="LCONTROL,VK_R,LCONTROL,VK_R" name="CtrlR+CtrlR" />
+    <Action type="MouseClickAction" isDbl="False" button="LBUTTON" name="LeftClick" />
+  </Actions>
+  <Modes>
+    <Mode name="Global">
+      <Map trigger="RightHandCwCircle" action="PressA" />
+      <Map trigger="RightHandCcwCircle" action="PressShiftA" />
+      <Map trigger="LeftHandCwCircle" action="Alt+Tab" />
+      <Map trigger="LeftHandCcwCircle" action="AM:Clicker" />
+    </Mode>
+    <Mode name="Clicker">
+      <Map trigger="RightHandCwCircle" action="LeftClick" />
+      <Map trigger="LeftHandCcwCircle" action="DM:Clicker" />
+    </Mode>
+  </Modes>
+</Configuration>

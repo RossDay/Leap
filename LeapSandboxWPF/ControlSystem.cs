@@ -57,7 +57,6 @@ namespace Vyrolan.VMCS
             var mma2 = new KeyHoldAction {Key = VirtualKeyCode.LSHIFT};
             var lt3 = new RangeTrigger(_HandManager.LeftHand.RollState) { RequiresStabilized = true, MinValue = 45, MaxValue = 105, Resistance = 0, Stickiness = 5, Name = "LH1F" };
             mma2.RegisterTrigger(lt3);
-            */
 
             var sa = new KeyPressAction("PressShiftA") { Key = "VK_A" };
             sa.Modifiers = "SHIFT,LCONTROL";
@@ -83,6 +82,7 @@ namespace Vyrolan.VMCS
             _ActionDispatcher.AddTrigger(lt2);
 
             var mc = new MouseClickAction("LeftClick") { Button = "LBUTTON" };
+            */
 
             //_LogAction(rt.ToXml());
             //_LogAction(rt2.ToXml());
