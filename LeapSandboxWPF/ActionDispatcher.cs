@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Vyrolan.VMCS.Actions;
 using Vyrolan.VMCS.Gestures;
 using Vyrolan.VMCS.Triggers;
@@ -11,11 +10,22 @@ namespace Vyrolan.VMCS
     internal class ActionDispatcher : IGestureDispatcher
     {
         private readonly object _Lock = new object();
-        private readonly Dictionary<string, BaseTrigger> _Triggers = new Dictionary<string, BaseTrigger>();
-        private readonly Dictionary<string, BaseAction> _Actions = new Dictionary<string, BaseAction>();
-        private readonly Dictionary<string, ConfigurationMode> _Modes = new Dictionary<string, ConfigurationMode>();
+        private readonly Configuration _Configuration;
+
+        private IDictionary<string, BaseTrigger> _Triggers { get { return _Configuration.Triggers; } } 
+        private IDictionary<string, BaseAction> _Actions { get { return _Configuration.Actions; } } 
+        private IDictionary<string, ConfigurationMode> _Modes { get { return _Configuration.Modes; } } 
+
         private readonly LinkedList<ConfigurationMode> _ActiveModes = new LinkedList<ConfigurationMode>();
         private Dictionary<BaseTrigger, BaseAction> _ActiveMap;
+
+        public ActionDispatcher(Configuration config)
+        {
+            _Configuration = config;
+            _ActiveMap = new Dictionary<BaseTrigger, BaseAction>();
+            UpdateActiveMap(null, true);
+            _Configuration.TriggerChanged += OnTriggerChanged;
+        }
 
         #region UpdateActiveMap
         private bool UpdateActiveMap(string modeName, bool isActivate)
@@ -41,17 +51,15 @@ namespace Vyrolan.VMCS
 
             // check that new map won't instantly deactivate/reactivate
             if (
-                map.Where(p =>
-                    p.Key.IsTriggered
-                    && !(p.Key is GestureTrigger)
-                    && p.Value is ModeAction
-                    && ((ModeAction)p.Value).IsMatch(modeName, !isActivate)
-                ).Count() > 0
+                map.Count(p => p.Key.IsTriggered
+                               && p.Value is ModeAction
+                               && ((ModeAction)p.Value).IsMatch(modeName, !isActivate)
+                         ) > 0
             )
                 return false;
 
             // check all triggered Triggers in current map to see if action is gone/different in new map
-            foreach (var mapPair in _ActiveMap.Where(p => p.Key.IsTriggered && !(p.Key is GestureTrigger)))
+            foreach (var mapPair in _ActiveMap.Where(p => p.Key.IsTriggered))
                 if (!map.TryGetValue(mapPair.Key, out action))
                     // mapping is gone...action should end
                     EndAction(action);
@@ -64,7 +72,7 @@ namespace Vyrolan.VMCS
 
             // begin any new triggered action not present in current
             foreach (var mapPair in map)
-                if (mapPair.Key.IsTriggered && !(mapPair.Key is GestureTrigger) && !_ActiveMap.ContainsKey(mapPair.Key))
+                if (mapPair.Key.IsTriggered && !_ActiveMap.ContainsKey(mapPair.Key))
                     BeginAction(mapPair.Value);
 
             _ActiveMap = map;

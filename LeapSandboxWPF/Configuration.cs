@@ -20,5 +20,13 @@ namespace Vyrolan.VMCS
         public IDictionary<string, ConfigurationMode> Modes { get { lock (_Lock) return _Modes; } }
 
 
+
+        public event EventHandler<TriggerEventArgs> TriggerChanged;
+        void OnTriggered(object sender, TriggerEventArgs e)
+        {
+            if (TriggerChanged != null)
+                TriggerChanged(sender, e);
+        }
+
     }
 }

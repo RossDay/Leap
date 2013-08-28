@@ -1,14 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
-using System.Text;
 
 namespace Vyrolan.VMCS.Triggers
 {
     internal class TriggerEventArgs : EventArgs
     {
-        public string TriggerName { get; set; }
         public bool IsTriggered { get; set; }
     }
 
@@ -29,7 +26,7 @@ namespace Vyrolan.VMCS.Triggers
         protected bool _IsTriggered;
         public virtual bool IsTriggered
         {
-            get { return _IsTriggered; }
+            get { return _IsTriggered && !(this is DiscreteTrigger); }
             protected set
             {
                 if (CheckHand(null) && (!_IsTriggered.Equals(value) || value))
@@ -44,7 +41,7 @@ namespace Vyrolan.VMCS.Triggers
         protected void OnTriggered()
         {
             if (Triggered != null)
-                Triggered(this, new TriggerEventArgs { TriggerName = Name, IsTriggered = IsTriggered });
+                Triggered(this, new TriggerEventArgs { IsTriggered = IsTriggered });
         }
 
         protected bool CheckHand(IEnumerable<int> candidateHandIds)

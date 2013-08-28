@@ -18,6 +18,8 @@ namespace Vyrolan.VMCS
 
         private readonly Controller _Controller;
         private readonly MainListener _Listener;
+
+        private readonly Configuration _Configuration;
         private readonly HandManager _HandManager;
         private readonly GestureRecognizer _GestureRecognizer;
         private readonly ActionDispatcher _ActionDispatcher;
@@ -30,7 +32,8 @@ namespace Vyrolan.VMCS
             _LogAction("Control System Constructed");
 
             _HandManager = new HandManager();
-            _ActionDispatcher = new ActionDispatcher();
+            _Configuration = new Configuration();
+            _ActionDispatcher = new ActionDispatcher(_Configuration);
             _GestureRecognizer = new GestureRecognizer(_ActionDispatcher);
 
             _Controller = new Controller();
