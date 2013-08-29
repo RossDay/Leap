@@ -90,5 +90,33 @@ namespace Vyrolan.VMCS
             xml.AppendLine("</Settings>");
             return xml.ToString();
         }
+
+        public static string ModeToXml(ConfigurationMode mode)
+        {
+            var xml = new StringBuilder();
+            xml.AppendFormat("<Mode name=\"{0}\">", mode.Name).AppendLine();
+            foreach (var map in mode.Mappings)
+                xml.AppendFormat("  <Map trigger=\"{0}\" action=\"{1}\" />", map.Key, map.Value).AppendLine();
+            xml.AppendLine("</Mode>");
+            return xml.ToString();
+        }
+
+        public static ConfigurationMode ModeFromXml(XmlNode xml)
+        {
+            var name = xml.Attributes.GetNamedItem("name").Value;
+            var mode = new ConfigurationMode(name);
+
+            foreach (XmlNode map in xml.SelectNodes("Map"))
+            {
+                var trigger = map.Attributes.GetNamedItem("trigger").Value;
+                var action = map.Attributes.GetNamedItem("action").Value;
+                if (mode.Mappings.ContainsKey(trigger))
+                    continue; // must be bad config
+                mode.Mappings.Add(trigger, action);
+            }
+
+            return mode;
+        } 
+
     }
 }

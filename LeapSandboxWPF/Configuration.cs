@@ -35,5 +35,30 @@ namespace Vyrolan.VMCS
                 TriggerChanged(sender, e);
         }
 
+        public string ToXml()
+        {
+            var xml = new StringBuilder();
+            xml.AppendLine("<Configuration>");
+            xml.Append(ConfigurationSerializer.SettingsToXml());
+
+            xml.AppendLine("<Triggers>");
+            foreach (var trigger in Triggers.Values)
+                xml.Append("  ").AppendLine(trigger.ToXml());
+            xml.AppendLine("</Triggers>");
+            
+            xml.AppendLine("<Actions>");
+            foreach (var action in Actions.Values)
+                xml.Append("  ").AppendLine(action.ToXml());
+            xml.AppendLine("</Actions>");
+
+            xml.AppendLine("<Modes>");
+            foreach (var mode in Modes.Values)
+                xml.Append(mode.ToXml());
+            xml.AppendLine("</Modes>");
+
+            xml.AppendLine("</Configuration>");
+            return xml.ToString();
+        }
+
     }
 }

@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Xml;
 
 namespace Vyrolan.VMCS
 {
     internal class ConfigurationMode : IEquatable<ConfigurationMode>
     {
         private Dictionary<string, string> _Mappings = new Dictionary<string, string>();
+        internal IDictionary<string, string> Mappings { get { return _Mappings; } }
         public string Name { get; private set; }
 
         public ConfigurationMode(string name)
@@ -31,29 +30,12 @@ namespace Vyrolan.VMCS
         #region To/From XML
         public string ToXml()
         {
-            var xml = new StringBuilder();
-            xml.AppendFormat("<Mode name=\"{0}\">", Name).AppendLine();
-            foreach (var map in _Mappings)
-                xml.AppendFormat("  <Map trigger=\"{0}\" action=\"{1}\" />", map.Key, map.Value).AppendLine();
-            xml.AppendLine("</Mode>");
-            return xml.ToString();
+            return ConfigurationSerializer.ModeToXml(this);
         }
 
-        public static ConfigurationMode FromXml(XmlNode xml)
+        public static ConfigurationMode FromXml(System.Xml.XmlNode xml)
         {
-            var name = xml.Attributes.GetNamedItem("name").Value;
-            var mode = new ConfigurationMode(name);
-
-            foreach (XmlNode map in xml.SelectNodes("/Mode/Map"))
-            {
-                var trigger = map.Attributes.GetNamedItem("trigger").Value;
-                var action = map.Attributes.GetNamedItem("action").Value;
-                if (mode._Mappings.ContainsKey(trigger))
-                    continue; // must be bad config
-                mode._Mappings.Add(trigger, action);
-            }
-
-            return mode;
+            return ConfigurationSerializer.ModeFromXml(xml);
         } 
         #endregion
 
