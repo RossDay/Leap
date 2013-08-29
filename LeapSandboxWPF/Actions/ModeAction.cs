@@ -7,10 +7,25 @@ namespace Vyrolan.VMCS.Actions
 {
     class ModeAction : BaseAction
     {
+        private static IDictionary<string, ModeAction> _Instances = new Dictionary<string, ModeAction>();
+        public static ModeAction Create(string name)
+        {
+            lock (_Instances)
+            {
+                ModeAction a;
+                if (!_Instances.TryGetValue(name, out a))
+                {
+                    a = new ModeAction(name);
+                    _Instances.Add(name, a);
+                }
+                return a;
+            }
+        }
+
         public string ModeName { get; private set; }
         public bool IsActivate { get; private set; }
 
-        public ModeAction(string name)
+        private ModeAction(string name)
             : base(name)
         {
             ModeName = name.Substring(2);

@@ -53,5 +53,42 @@ namespace Vyrolan.VMCS
 
             return obj;
         }
+
+        public static void SettingsFromXml(XmlNode xml)
+        {
+            var settingsDict = new Dictionary<string, string>();
+            foreach (XmlNode node in xml.SelectNodes("Setting"))
+                settingsDict.Add(node.Attributes.GetNamedItem("name").Value, node.Attributes.GetNamedItem("value").Value);
+
+            string value;
+            var props = typeof(Configuration).GetProperties(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
+            foreach (var prop in props)
+            {
+                var param = prop.GetCustomAttributes(typeof(ConfigurationParameterAttribute), false).Cast<ConfigurationParameterAttribute>().FirstOrDefault();
+                if (param == null) continue;
+
+                if (settingsDict.TryGetValue(param.ParameterName, out value))
+                    prop.SetValue(Configuration.Instance, Convert.ChangeType(value, prop.PropertyType), null);
+            }
+        }
+
+        public static string SettingsToXml()
+        {
+            var xml = new StringBuilder();
+            xml.AppendLine("<Settings>");
+
+            var props = typeof(Configuration).GetProperties(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
+            foreach (var prop in props)
+            {
+                var param = prop.GetCustomAttributes(typeof(ConfigurationParameterAttribute), false).Cast<ConfigurationParameterAttribute>().FirstOrDefault();
+                if (param == null) continue;
+
+                var value = prop.GetValue(Configuration.Instance, null).ToString();
+                xml.AppendFormat("  <Setting name=\"{0}\" value=\"{1}\" />", param.ParameterName, value).AppendLine();
+            }
+
+            xml.AppendLine("</Settings>");
+            return xml.ToString();
+        }
     }
 }

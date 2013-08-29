@@ -10,21 +10,18 @@ namespace Vyrolan.VMCS
     internal class ActionDispatcher : IGestureDispatcher
     {
         private readonly object _Lock = new object();
-        private readonly Configuration _Configuration;
-
-        private IDictionary<string, BaseTrigger> _Triggers { get { return _Configuration.Triggers; } } 
-        private IDictionary<string, BaseAction> _Actions { get { return _Configuration.Actions; } } 
-        private IDictionary<string, ConfigurationMode> _Modes { get { return _Configuration.Modes; } } 
+        private IDictionary<string, BaseTrigger> _Triggers { get { return Configuration.Instance.Triggers; } } 
+        private IDictionary<string, BaseAction> _Actions { get { return Configuration.Instance.Actions; } } 
+        private IDictionary<string, ConfigurationMode> _Modes { get { return Configuration.Instance.Modes; } } 
 
         private readonly LinkedList<ConfigurationMode> _ActiveModes = new LinkedList<ConfigurationMode>();
         private Dictionary<BaseTrigger, BaseAction> _ActiveMap;
 
-        public ActionDispatcher(Configuration config)
+        public ActionDispatcher()
         {
-            _Configuration = config;
             _ActiveMap = new Dictionary<BaseTrigger, BaseAction>();
             UpdateActiveMap(null, true);
-            _Configuration.TriggerChanged += OnTriggerChanged;
+            Configuration.Instance.TriggerChanged += OnTriggerChanged;
         }
 
         #region UpdateActiveMap
@@ -42,7 +39,7 @@ namespace Vyrolan.VMCS
                     if (String.IsNullOrEmpty(actionName))
                         continue; // trigger not in mode
                     if (actionName.StartsWith("AM:") || actionName.StartsWith("DM:"))
-                        action = new ModeAction(actionName); // TODO - make a factory and intern these
+                        action = ModeAction.Create(actionName);
                     else if (!_Actions.TryGetValue(actionName, out action))
                         continue; // must be bad config
                     map.Add(triggerPair.Value, action);

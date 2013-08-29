@@ -6,8 +6,6 @@ namespace Vyrolan.VMCS.Actions
 {
     internal class MouseMoveAction : PositionTrackingAction
     {
-        private static readonly int _SensitivityX = 60;
-        private static readonly int _SensitivityY = 40;
         private double _ScaleFactorX;
         private double _ScaleFactorY;
 
@@ -34,8 +32,8 @@ namespace Vyrolan.VMCS.Actions
                 motionHeight = 300;
             }
 
-            _ScaleFactorX = (_SensitivityX / 100.0) * screenWidth / motionWidth;
-            _ScaleFactorY = (_SensitivityY / 100.0) * screenHeight / motionHeight;
+            _ScaleFactorX = (Configuration.Instance.MouseSensitivityX / 100.0) * screenWidth / motionWidth;
+            _ScaleFactorY = (Configuration.Instance.MouseSensitivityY / 100.0) * screenHeight / motionHeight;
         }
 
         protected override IEnumerable<PositionTrackingAxis> ValidAxes
@@ -44,8 +42,30 @@ namespace Vyrolan.VMCS.Actions
         }
         protected override void ApplyPositionUpdate(PersistentHand hand, Vector change, int velocity)
         {
-            var x = Convert.ToInt32(GetX(change) * 2 * (velocity > 50 ? _ScaleFactorX : 1));
-            var y = Convert.ToInt32(GetY(change) * 2 * (velocity > 50 ? _ScaleFactorY : 1));
+            double scaleX;
+            double scaleY;
+            if (velocity > 150)
+            {
+                scaleX = _ScaleFactorX;
+                scaleY = _ScaleFactorY;
+            }
+            else if (velocity > 100)
+            {
+                scaleX = _ScaleFactorX * 2.0 / 3.0;
+                scaleY = _ScaleFactorY * 2.0 / 3.0;
+            }
+            else if (velocity > 50)
+            {
+                scaleX = _ScaleFactorX * 1.0 / 3.0;
+                scaleY = _ScaleFactorY * 1.0 / 3.0;
+            }
+            else 
+            {
+                scaleX = 1;
+                scaleY = 1;
+            }
+            var x = Convert.ToInt32(GetX(change) * 2 * scaleX);
+            var y = Convert.ToInt32(GetY(change) * 2 * scaleY);
 
             InputSimulator.Mouse.MoveMouseBy(x, -y);
         }

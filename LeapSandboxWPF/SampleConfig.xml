@@ -1,5 +1,7 @@
 <Configuration>
   <Settings>
+    <Setting name="mouseSensitivityX" value="60" />
+    <Setting name="mouseSensitivityY" value="40" />
   </Settings>
   <Triggers>
     <Trigger type="GestureTriggerCircle" isClockwise="True" minRadius="0" maxRadius="1000" name="RightHandCwCircle" reqStable="True" />
